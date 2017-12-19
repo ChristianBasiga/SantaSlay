@@ -2,41 +2,45 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SantaPlayer : MonoBehaviour
+using SantaGame;
+
+public class SantaController : MonoBehaviour
 {
 
-
-    //speed
-    public float speed;
-
+    private Santa santa;
     //rigid component 
     private Rigidbody2D r2d;
-
-    //collider component
-    Collider col;
-
     // Use this for initialization
     void Start()
     {
         //get component
         r2d = GetComponent<Rigidbody2D>();
+        santa = new Santa(10, 0, 5);
     }
     void FixedUpdate()
     {
+        //This is fine, the foreground will be moving so will look like always moving as well
         //horizontal
         float moveHorizontal = Input.GetAxis("Horizontal");
 
-        //vertical
+
+        //vertical 
         float moveVertical = Input.GetAxis("Vertical");
 
-        //vector movement
+        //vector direction
         Vector2 movement = new Vector2(moveHorizontal, moveVertical);
 
         //movement 
-        r2d.AddForce(movement * speed);
+        r2d.AddForce(movement * santa.Speed, ForceMode.IMPULSE);
+    }
 
-        
+
+    void OnTriggerEnterCollider(Collider2D collider)
+    {
+        if (collider.CompareTag("Obstacle"))
+        {
+            //Reduce speed and health by obstacle hit
+
+        }
+    }
 }
-
-
-    

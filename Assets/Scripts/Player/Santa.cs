@@ -11,9 +11,9 @@ namespace SantaGame
 
         private int health;
         private int points;
-        private int speed;
+        private float speed;
 
-        public Santa(int health, int points, int speed)
+        public Santa(int health, int points, float speed)
         {
             this.health = health;
             this.points = points;
@@ -38,7 +38,7 @@ namespace SantaGame
             }
         }
 
-        public int Speed
+        public float Speed
         {
 
             get
@@ -47,18 +47,7 @@ namespace SantaGame
             }
             set
             {
-                //Don't want it to be 0 either, cause santa should always be moving, background will be moving too for parrallax effect.
-                if (value <= 5)
-                {
-
-                    //Minimum of 5
-                    speed = 5;
-                }
-                else
-                {
-                    speed = value;
-                }
-
+                speed = value;
             }
         }
 
