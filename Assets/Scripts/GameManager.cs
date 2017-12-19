@@ -13,16 +13,20 @@ namespace SantaGame
         // Use this for initialization
 
         SantaController santa;
-        ReusablePool<House> housePool;
-        ReusablePool<Obstacle> obstaclePool;
+        PoolManager poolManger;
+        public SantaAmmo coalPrototype;
+        public SantaAmmo presentPrototype;
+        
+
 
         void Start()
         {
-            //I spawn different amounts per level
-            //Perhaps no need for pool for this since Game design
-            //may want to present naughty to nice houses in specific patterns
-            housePool = new ReusablePool<House>(20);
+            poolManger = PoolManager.Instance;
+            coalPrototype = Resources.Load(string.Format("Prefabs/Ammo/{0}", GameConstants.SantaAmmoType.COAL.ToString())) as SantaAmmo;
+            presentPrototype = Resources.Load(string.Format("Prefabs/Ammo/{0}", GameConstants.SantaAmmoType.PRESENT.ToString())) as SantaAmmo;
 
+            //Only one pool for ammo, will use prototypes to switch between
+            poolManger.AddPool(coalPrototype.ReuseID,coalProtoType,100);
 
         }
 

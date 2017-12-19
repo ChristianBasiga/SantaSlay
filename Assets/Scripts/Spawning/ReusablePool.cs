@@ -4,58 +4,77 @@ using UnityEngine;
 
 //Pool doesn't need to be a monobehaviour, spawners use pools and they will
 //be monos
-public class ReusablePool<T> where T : Reusable, new() {
+//I could just pool the model, but that would mean have to make model for everything and just is bad.
+//also would mean sitll need to instantite game Objects which defeats purpose
+public class PoolManager : MonoBehaviour {
 
-    private Stack<T> objectPool;
-    private static readonly int maxBuffer = 100;
-    int total;
-    //Won't be singleton, there will be different instances per type
-    public ReusablePool(int size)
+    //Read dictionary idea where just have pools for different types organized by id
+    //Better than template idea had, since this is UNity not normal c# and can't instantiate MonoBehaviours
+    private Dictionary<int, Queue<Reusable>> objectPools;
+
+    //To make it a singleton
+    private static PoolManager instance;
+
+
+    public static PoolManager Instance
     {
-        for (int i = 0; i < size; ++i)
-        {
-            objectPool.Push(new T());
+        get{
+        
+            if (instance == null)
+            {
+                instance = new PoolManager();
+            }
+            return instance;
         }
-
-        //Even if aquire this still total size of pool
-        total = size;
 
     }
 
-    public T Acquire()
+    void Awake()
     {
-        if (objectPool.Count > 0)
+
+        if (instance == null)
         {
-            T pooledObj = objectPool.Peek();
-            objectPool.Pop();
+            instance = this;
+        }
+        else if (instance != this)
+        {
+            Destroy(this);
+        }
+
+    }
+   
+
+    public void AddPool(int id, Reusable prefab, int buffer)
+    {
+
+        objectPools[id] = new Queue<Reusable>();
+
+        for (int i = 0; i < buffer; ++i)
+        {
+            objectPools[id].Enqueue(Instantiate(prefab));
+        }
+
+    }
+
+    public Reusable Acquire(int poolID)
+    {
+        if (objectPool[poolID].Count > 0)
+        {
+            T pooledObj = objectPool[poolID].Peek();
+            objectPool[poolID].Dequeue();
             pooledObj.backToPool += () => {Release(pooledObj); };
             return pooledObj;
         }
-        else
-        {
-            if (total < maxBuffer)
-            {
-                total += 1;
-                T poolAddition = new T();
-                poolAddition.backToPool += () => { Release(poolAddition); };
-                return poolAddition;
-            }
-            else
-            {
-                //If greater than buffer then don't back to pool jst add new instance or can return null to say that need to wait
-                //return new T();
-                return null;
-            }
-            
-        }
 
+        return null;
+       
     }
     
     //Private as only this class calls it with added event handler to backToPool Event
-    private void Release(T obj)
+    private void Release(int id,T obj)
     {
 
-        objectPool.Push(obj);
+        objectPools[id].Enqueue(obj);
 
     }
 }

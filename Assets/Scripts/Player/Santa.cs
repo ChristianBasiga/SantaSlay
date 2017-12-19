@@ -18,6 +18,8 @@ namespace SantaGame
             this.health = health;
             this.points = points;
             this.speed = speed;
+            dropping = GameConstants.SantaAmmoType.COAL;
+           
         }
 
         public int Health
@@ -68,6 +70,18 @@ namespace SantaGame
             else
                 this.points = points;
 
+        }
+
+        public void SwitchAmmo()
+        {
+            if (dropping == GameConstants.SantaAmmoType.COAL)
+            {
+                dropping = GameConstants.SantaAmmoType.PRESENT;
+            }
+            else
+            {
+                dropping = GameConstants.SantaAmmoType.COAL;
+            }
         }
 
         public SantaGame.GameConstants.SantaAmmoType dropping;
