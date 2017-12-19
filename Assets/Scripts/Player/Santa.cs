@@ -6,8 +6,13 @@ namespace SantaGame
 {
 
     //Class cause need as reference in lambda, otherwise would be struct
+    public delegate void Notifier(int val);
     public class Santa
     {
+        //The GameManager will add to this a function to check if health is 0 and create GameOver instance
+        //GUI manager will add to this to update GUI accordingly
+        public event Notifier healthUpdated;
+        public event Notifier pointsUpdated;
 
         private int health;
         private int points;
@@ -35,6 +40,8 @@ namespace SantaGame
                 }
                 else
                     health = value;
+
+                healthUpdated(health);
             }
         }
 
@@ -79,6 +86,7 @@ namespace SantaGame
             else
                 this.points = points;
 
+            pointsUpdated(points);
         }
 
         public SantaGame.GameConstants.SantaAmmoType dropping;
