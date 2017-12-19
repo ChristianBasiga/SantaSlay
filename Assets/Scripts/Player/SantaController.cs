@@ -12,10 +12,28 @@ public class SantaController : MonoBehaviour
     private Santa santa;
     //rigid component 
     private Rigidbody2D r2d;
+    //collider
+    Collider col;
 
     //For delay between shots
     public float reloadTime;
     public float timeTillReload;
+    
+    //damaged
+    bool = damaged;
+    //damage sound
+    AudioSource ???
+    
+    //HUD health update (can update this when HUD is made, just putting this for placeholder)
+    public Slider healthSlider;
+    
+    //player current health
+    public int currentHealth; 
+    
+    
+    //dead
+    bool = isDead;
+   
 
   
 
@@ -79,6 +97,54 @@ public class SantaController : MonoBehaviour
         
         timeTillReload = reloadTime;
         SantaShot(santa.dropping);
+             
+
+    }
+    
+    void OnTriggerEnter(Collider other)
+      {
+        if(other.CompareTag("Bird")){
+        
+        //mutliplier???
+       GameManager.instance.ScoreMultiplier???();
+    
+      }
+       else if(other.CompareTag("Obstacle"))
+      {
+       
+       
+        // damage flag
+        damaged = true;
+        
+        //damageSound
+       
+
+        // Reduce health by amount
+        currentHealth -= amount;
+
+        // Set health to current value
+        healthSlider.value = currentHealth;
+
+
+        // If health reaches 0
+        if(currentHealth <= 0 && !isDead)
+        {
+            // le dead
+            Death ();
+            
+            //game over
+            GameManager.instance.GameOver();        
+            
+        
+        //slow movement
+                           
+      
+        //place Obstacle back to pool
+        <obstacleName>.BackToPool();
+        
+                
+    
+      }
 
     }
 
