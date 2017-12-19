@@ -5,12 +5,11 @@ using UnityEngine;
 
 namespace SantaGame
 {
-    public delegate void AmmoDelegate(int points);
 
     public class House : Reusable
     {
         
-        public event AmmoDelegate AmmoHit;
+        public event Notifier AmmoHit;
 
         private GameConstants.HouseState houseState;
 
