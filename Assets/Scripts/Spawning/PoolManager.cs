@@ -45,33 +45,35 @@ public class PoolManager : MonoBehaviour {
     }
    
 
-    public void AddPool(int id, Reusable prefab, int buffer)
+    //Same here
+    public void AddPool(Reusable prefab, int buffer)
     {
-        if (objectPools.ContainsKey(id))
+        if (objectPools.ContainsKey(prefab.ReuseID))
         {
             Debug.Log("Already there");
             return;
         }
 
-        objectPools[id] = new Queue<Reusable>();
+        objectPools[prefab.ReuseID] = new Queue<Reusable>();
 
         for (int i = 0; i < buffer; ++i)
         {
             Reusable created = Instantiate(prefab);
             created.gameObject.SetActive(false);
             created.transform.parent = this.transform;
-            objectPools[id].Enqueue(created);
+            objectPools[prefab.ReuseID].Enqueue(created);
         }
 
     }
 
+    //This is fine since only passind id
     public Reusable Acquire(int poolID)
     {
         if (objectPools[poolID].Count > 0)
         {
             Reusable pooledObj = objectPools[poolID].Peek();
             objectPools[poolID].Dequeue();
-            pooledObj.backToPool += () => {Release(poolID,pooledObj); };
+            pooledObj.backToPool += () => {Release(pooledObj); };
             return pooledObj;
         }
 
@@ -82,10 +84,11 @@ public class PoolManager : MonoBehaviour {
   
 
     //Private as only this class calls it with added event handler to backToPool Event
-    private void Release(int id, Reusable obj)
+    //Can derive id from obj, so wtf was i doin here.
+    private void Release(Reusable obj)
     {
         obj.gameObject.SetActive(false);
-        objectPools[id].Enqueue(obj);
+        objectPools[obj.ReuseID].Enqueue(obj);
 
     }
 }

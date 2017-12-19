@@ -14,12 +14,39 @@ namespace SantaGame
 
         SantaController santa;
         PoolManager poolManager;
+
         public SantaAmmo ammoPrefab;
         House housePrefab;
+        public Bird birdPrefab;
+        public Plane planePrefab;
+
         void Awake()
         {
             santa = GameObject.FindGameObjectWithTag("Player").GetComponent<SantaController>();
             poolManager = GetComponent<PoolManager>();
+
+
+
+
+            ammoPrefab = ((GameObject)Resources.Load(string.Format("Prefabs/Ammo/{0}", GameConstants.SantaAmmoType.COAL.ToString()))).GetComponent<SantaAmmo>();
+            ammoPrefab.ReuseID = 1;
+
+            housePrefab = ((GameObject)Resources.Load("Prefabs/House")).GetComponent<House>();
+            //May actually just change to static oncstants as will start to get More hectic as more pools added.
+            housePrefab.ReuseID = 2;
+
+            #region Spawning obstacles
+            //Could prob do neater, but at this point just get set up, nly change to make is make enum for diff kinda, but eh. Not needed and at that point mightaswell just
+            //not have the derivations but need it for different updates and added functionality of Bird with multiplier, but we'll see. I'll put more thought into this later
+            //Want more just done at this point so can start asking someone for art part.
+            birdPrefab = ((GameObject)Resources.Load("Prefabs/Obstacles/Bird")).GetComponent<Bird>();
+            birdPrefab.ReuseID = 3;
+            poolManager.AddPool(birdPrefab, 4);
+
+            planePrefab = ((GameObject)Resources.Load("Prefabs/Obstacles/Plane")).GetComponent<Plane>();
+            poolManager.AddPool(planePrefab, 3);
+            birdPrefab.ReuseID = 4;
+            #endregion
         }
 
 
@@ -33,23 +60,20 @@ namespace SantaGame
 
         private void InitHousePool()
         {
-            housePrefab = ((GameObject)Resources.Load("Prefabs/House")).GetComponent<House>();
-            housePrefab.ReuseID = 2;
+          
             //Could reuse notifier delegate had in MOdel, instead of making new one, but won't effect stuff in here
             housePrefab.AmmoHit += (int points) => { santa.santa.UpdatePoints(points); };
             //No more than 5 seeing at a time
-            poolManager.AddPool(housePrefab.ReuseID, housePrefab, 5);
+            poolManager.AddPool(housePrefab, 5);
         }
 
 
         private void InitAmmoPool()
         {
 
-            ammoPrefab = ((GameObject)Resources.Load(string.Format("Prefabs/Ammo/{0}", GameConstants.SantaAmmoType.COAL.ToString()))).GetComponent<SantaAmmo>();
-
-            ammoPrefab.ReuseID = 1;
+          
             //Only one pool for ammo, will use prototypes to switch between
-            poolManager.AddPool(ammoPrefab.ReuseID, ammoPrefab, 10);
+            poolManager.AddPool(ammoPrefab, 10);
 
             //Adding for taking out from pool and instantiating
             santa.SantaShot += (GameConstants.SantaAmmoType type) => {
@@ -79,19 +103,20 @@ namespace SantaGame
             //Getting input just for testing
             if (Input.GetKeyDown(KeyCode.A))
             {
-                Reusable house = poolManager.Acquire(housePrefab.ReuseID);
-                house.GetComponent<House>().AmmoHit += (int points) => { santa.santa.UpdatePoints(points); };
 
-                house.gameObject.SetActive(true);
                 //Where this is put will depend on level design
+                spawnHouse();
             }
 
         }
 
 
-        void spawnHouse()
+        private void spawnHouse()
         {
+            Reusable house = poolManager.Acquire(housePrefab.ReuseID);
+            house.GetComponent<House>().AmmoHit += (int points) => { santa.santa.UpdatePoints(points); };
 
+            house.gameObject.SetActive(true);
         }
 
 
