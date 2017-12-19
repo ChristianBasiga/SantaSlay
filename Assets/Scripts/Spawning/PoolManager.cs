@@ -84,7 +84,7 @@ public class PoolManager : MonoBehaviour {
     //Private as only this class calls it with added event handler to backToPool Event
     private void Release(int id, Reusable obj)
     {
-
+        obj.gameObject.SetActive(false);
         objectPools[id].Enqueue(obj);
 
     }

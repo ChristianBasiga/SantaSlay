@@ -32,6 +32,7 @@ namespace SantaGame
         }
 
         
+        //If this doesn't happen on same time as Ammo before it disappears, then I'll just have SantoAmmo do all this
         void OnTriggerEnter2D(Collider2D other)
         {
             if (other.CompareTag("Ammo"))

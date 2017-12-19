@@ -27,6 +27,11 @@ public class Reusable : MonoBehaviour
         }
     }
 
+    //Because can't call event directly
+    protected void BackToPool()
+    {
+        backToPool();
+    }
 }
 public delegate void EditReusable();
 
