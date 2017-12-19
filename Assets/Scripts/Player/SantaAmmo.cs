@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace SantaGame
 {
-    public class SantaAmmo : MonoBehaviour
+    public class SantaAmmo : Reusable
     {
 
         public GameConstants.SantaAmmoType type;
