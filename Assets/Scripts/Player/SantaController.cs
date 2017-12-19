@@ -96,6 +96,9 @@ public class SantaController : MonoBehaviour
     {
         if (coll.CompareTag("Obstacle"))
         {
+            Obstacle obstacleInfo = coll.GetComponent<obstacleInfo>();
+            _santa.Health -= obstacleInfo.Damage;
+            _santa.Speed *= obstacleInfo.SpeedEffect;
 
         }
 
