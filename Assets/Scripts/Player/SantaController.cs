@@ -9,7 +9,7 @@ public class SantaController : MonoBehaviour
     public delegate void AmmoDelegate(GameConstants.SantaAmmoType ammoType);
     public event AmmoDelegate SantaShot;
 
-    private Santa santa;
+    private Santa _santa;
     //rigid component 
     private Rigidbody2D r2d;
 
@@ -17,8 +17,14 @@ public class SantaController : MonoBehaviour
     public float reloadTime;
     public float timeTillReload;
 
-  
 
+
+    public Santa santa{
+
+        get{
+            return _santa;
+        }
+    }
     void Start()
     {
         //get component
@@ -28,7 +34,7 @@ public class SantaController : MonoBehaviour
 
         
        
-        santa = new Santa(10, 0, 5);
+        _santa = new Santa(10, 0, 5);
     }
     void FixedUpdate()
     {
@@ -44,7 +50,7 @@ public class SantaController : MonoBehaviour
         Vector2 movement = new Vector2(moveHorizontal, moveVertical);
 
         //movement 
-        r2d.AddForce(movement * santa.Speed);
+        r2d.AddForce(movement * _santa.Speed);
 
 
     }
@@ -56,7 +62,9 @@ public class SantaController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.X))
         {
             //Test after add that method in there
-            santa.SwitchAmmo();
+            _santa.SwitchAmmo();
+            //Yup points being updated
+            Debug.Log(_santa.Points);
 
         }
         //Else cause can't shoot and swap ammo at same time
@@ -78,6 +86,7 @@ public class SantaController : MonoBehaviour
     {
         
         timeTillReload = reloadTime;
+      
         SantaShot(santa.dropping);
 
     }

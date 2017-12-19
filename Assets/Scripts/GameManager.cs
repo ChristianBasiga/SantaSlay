@@ -16,17 +16,17 @@ namespace SantaGame
         PoolManager poolManager;
         public SantaAmmo coalPrototype;
         public SantaAmmo presentPrototype;
-        
+        House housePrefab;
         void Awake()
         {
             santa = GameObject.FindGameObjectWithTag("Player").GetComponent<SantaController>();
-            poolManager = GameObject.Find("PoolManager").GetComponent<PoolManager>();
+            poolManager = GetComponent<PoolManager>();
         }
 
 
         void Start()
         {
-
+            
             InitAmmoPool();
             InitHousePool();
         }
@@ -34,8 +34,8 @@ namespace SantaGame
 
         private void InitHousePool()
         {
-            House housePrefab = ((GameObject)Resources.Load("Prefabs/House")).GetComponent<House>();
-
+            housePrefab = ((GameObject)Resources.Load("Prefabs/House")).GetComponent<House>();
+            housePrefab.ReuseID = 2;
             //Could reuse notifier delegate had in MOdel, instead of making new one, but won't effect stuff in here
             housePrefab.AmmoHit += (int points) => { santa.santa.UpdatePoints(points); };
             //No more than 5 seeing at a time
@@ -49,7 +49,7 @@ namespace SantaGame
             coalPrototype = ((GameObject)Resources.Load(string.Format("Prefabs/Ammo/{0}", GameConstants.SantaAmmoType.COAL.ToString()))).GetComponent<SantaAmmo>();
             presentPrototype = ((GameObject)Resources.Load(string.Format("Prefabs/Ammo/{0}", GameConstants.SantaAmmoType.PRESENT.ToString()))).GetComponent<SantaAmmo>();
 
-
+            coalPrototype.ReuseID = 1;
             //Only one pool for ammo, will use prototypes to switch between
             poolManager.AddPool(coalPrototype.ReuseID, coalPrototype, 10);
 
@@ -57,7 +57,7 @@ namespace SantaGame
             santa.SantaShot += (GameConstants.SantaAmmoType type) => {
 
                 Reusable ammo = poolManager.Acquire(coalPrototype.ReuseID);
-
+                 
                 SantaAmmo ammoInfo = ammo.GetComponent<SantaAmmo>();
                 switch (type)
                 {
@@ -81,7 +81,11 @@ namespace SantaGame
             //Getting input just for testing
             if (Input.GetKeyDown(KeyCode.A))
             {
+                Reusable house = poolManager.Acquire(housePrefab.ReuseID);
+                house.GetComponent<House>().AmmoHit += (int points) => { santa.santa.UpdatePoints(points); };
 
+                house.gameObject.SetActive(true);
+                //Where this is put will depend on level design
             }
 
         }

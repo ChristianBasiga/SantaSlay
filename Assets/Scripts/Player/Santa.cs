@@ -68,7 +68,7 @@ namespace SantaGame
             }
         }
 
-        public void updatePoints(int points)
+        public void UpdatePoints(int points)
         {
             if (points < 0)
             {
@@ -77,6 +77,11 @@ namespace SantaGame
             else
                 this.points = points;
 
+            if (pointsUpdated == null)
+            {
+                //This is fine, nothing there right now the event handlers for this is going to be GUI for points
+                return;
+            }
             pointsUpdated(points);
         }
 

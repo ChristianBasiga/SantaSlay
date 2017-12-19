@@ -18,7 +18,6 @@ namespace SantaGame
        
         void Start()
         {
-            poolID = 1;
              
 
         }

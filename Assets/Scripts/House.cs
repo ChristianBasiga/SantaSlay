@@ -13,6 +13,11 @@ namespace SantaGame
 
         private GameConstants.HouseState houseState;
 
+
+        void Awake()
+        {
+        }
+
         void Start()
         {
             int rand = Random.Range(5, 25);
@@ -31,9 +36,9 @@ namespace SantaGame
         {
             if (other.CompareTag("Ammo"))
             {
-                GameConstants.SantaAmmoType ammoType = GetComponent<GameConstants.SantaAmmoType>();
-
-                AmmoHit(GameConstants.pointWorth[houseState][ammoType]);
+                SantaAmmo ammoType = other.GetComponent<SantaAmmo>();
+               
+                AmmoHit(GameConstants.pointWorth[houseState][ammoType.type]);
             }
 
         }

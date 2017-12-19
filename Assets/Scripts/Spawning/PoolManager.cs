@@ -47,6 +47,11 @@ public class PoolManager : MonoBehaviour {
 
     public void AddPool(int id, Reusable prefab, int buffer)
     {
+        if (objectPools.ContainsKey(id))
+        {
+            Debug.Log("Already there");
+            return;
+        }
 
         objectPools[id] = new Queue<Reusable>();
 
@@ -74,6 +79,8 @@ public class PoolManager : MonoBehaviour {
        
     }
     
+  
+
     //Private as only this class calls it with added event handler to backToPool Event
     private void Release(int id, Reusable obj)
     {
