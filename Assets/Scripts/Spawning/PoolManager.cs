@@ -31,6 +31,7 @@ public class PoolManager : MonoBehaviour {
 
     void Awake()
     {
+        objectPools = new Dictionary<int, Queue<Reusable>>();
 
         if (instance == null)
         {
@@ -51,18 +52,21 @@ public class PoolManager : MonoBehaviour {
 
         for (int i = 0; i < buffer; ++i)
         {
-            objectPools[id].Enqueue(Instantiate(prefab));
+            Reusable created = Instantiate(prefab);
+            created.gameObject.SetActive(false);
+            created.transform.parent = this.transform;
+            objectPools[id].Enqueue(created);
         }
 
     }
 
     public Reusable Acquire(int poolID)
     {
-        if (objectPool[poolID].Count > 0)
+        if (objectPools[poolID].Count > 0)
         {
-            T pooledObj = objectPool[poolID].Peek();
-            objectPool[poolID].Dequeue();
-            pooledObj.backToPool += () => {Release(pooledObj); };
+            Reusable pooledObj = objectPools[poolID].Peek();
+            objectPools[poolID].Dequeue();
+            pooledObj.backToPool += () => {Release(poolID,pooledObj); };
             return pooledObj;
         }
 
@@ -71,7 +75,7 @@ public class PoolManager : MonoBehaviour {
     }
     
     //Private as only this class calls it with added event handler to backToPool Event
-    private void Release(int id,T obj)
+    private void Release(int id, Reusable obj)
     {
 
         objectPools[id].Enqueue(obj);

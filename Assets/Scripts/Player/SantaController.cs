@@ -76,7 +76,7 @@ public class SantaController : MonoBehaviour
 
     void Shoot()
     {
-
+        
         timeTillReload = reloadTime;
         SantaShot(santa.dropping);
 

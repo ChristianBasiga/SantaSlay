@@ -12,7 +12,7 @@ namespace SantaGame
         float speed;
        
 
-        RigidBody2D rb;
+        Rigidbody2D rb;
 
        
        
