@@ -23,7 +23,6 @@ namespace SantaGame
             this.health = health;
             this.points = points;
             this.speed = speed;
-            dropping = GameConstants.SantaAmmoType.COAL;
            
         }
 

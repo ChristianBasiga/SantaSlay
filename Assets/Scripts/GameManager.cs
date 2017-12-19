@@ -14,8 +14,7 @@ namespace SantaGame
 
         SantaController santa;
         PoolManager poolManager;
-        public SantaAmmo coalPrototype;
-        public SantaAmmo presentPrototype;
+        public SantaAmmo ammoPrefab;
         House housePrefab;
         void Awake()
         {
@@ -46,17 +45,16 @@ namespace SantaGame
         private void InitAmmoPool()
         {
 
-            coalPrototype = ((GameObject)Resources.Load(string.Format("Prefabs/Ammo/{0}", GameConstants.SantaAmmoType.COAL.ToString()))).GetComponent<SantaAmmo>();
-            presentPrototype = ((GameObject)Resources.Load(string.Format("Prefabs/Ammo/{0}", GameConstants.SantaAmmoType.PRESENT.ToString()))).GetComponent<SantaAmmo>();
+            ammoPrefab = ((GameObject)Resources.Load(string.Format("Prefabs/Ammo/{0}", GameConstants.SantaAmmoType.COAL.ToString()))).GetComponent<SantaAmmo>();
 
-            coalPrototype.ReuseID = 1;
+            ammoPrefab.ReuseID = 1;
             //Only one pool for ammo, will use prototypes to switch between
-            poolManager.AddPool(coalPrototype.ReuseID, coalPrototype, 10);
+            poolManager.AddPool(ammoPrefab.ReuseID, ammoPrefab, 10);
 
             //Adding for taking out from pool and instantiating
             santa.SantaShot += (GameConstants.SantaAmmoType type) => {
 
-                Reusable ammo = poolManager.Acquire(coalPrototype.ReuseID);
+                Reusable ammo = poolManager.Acquire(ammoPrefab.ReuseID);
                  
                 SantaAmmo ammoInfo = ammo.GetComponent<SantaAmmo>();
                 switch (type)
