@@ -13,22 +13,76 @@ namespace SantaGame
         // Use this for initialization
 
         SantaController santa;
-        ReusablePool<House> housePool;
-        ReusablePool<Obstacle> obstaclePool;
+        PoolManager poolManager;
+        public SantaAmmo coalPrototype;
+        public SantaAmmo presentPrototype;
+        
+        void Awake()
+        {
+            santa = GameObject.FindGameObjectWithTag("Player").GetComponent<SantaController>();
+            poolManager = GameObject.Find("PoolManager").GetComponent<PoolManager>();
+        }
+
 
         void Start()
         {
-            //I spawn different amounts per level
-            //Perhaps no need for pool for this since Game design
-            //may want to present naughty to nice houses in specific patterns
-            housePool = new ReusablePool<House>(20);
 
-
+            InitAmmoPool();
+            InitHousePool();
         }
 
+
+        private void InitHousePool()
+        {
+            House housePrefab = ((GameObject)Resources.Load("Prefabs/House")).GetComponent<House>();
+
+            //Could reuse notifier delegate had in MOdel, instead of making new one, but won't effect stuff in here
+            housePrefab.AmmoHit += (int points) => { santa.santa.UpdatePoints(points); };
+            //No more than 5 seeing at a time
+            poolManager.AddPool(housePrefab.ReuseID, housePrefab, 5);
+        }
+
+
+        private void InitAmmoPool()
+        {
+
+            coalPrototype = ((GameObject)Resources.Load(string.Format("Prefabs/Ammo/{0}", GameConstants.SantaAmmoType.COAL.ToString()))).GetComponent<SantaAmmo>();
+            presentPrototype = ((GameObject)Resources.Load(string.Format("Prefabs/Ammo/{0}", GameConstants.SantaAmmoType.PRESENT.ToString()))).GetComponent<SantaAmmo>();
+
+
+            //Only one pool for ammo, will use prototypes to switch between
+            poolManager.AddPool(coalPrototype.ReuseID, coalPrototype, 10);
+
+            //Adding for taking out from pool and instantiating
+            santa.SantaShot += (GameConstants.SantaAmmoType type) => {
+
+                Reusable ammo = poolManager.Acquire(coalPrototype.ReuseID);
+
+                SantaAmmo ammoInfo = ammo.GetComponent<SantaAmmo>();
+                switch (type)
+                {
+                    //Prob like arrays where by reference until change then is copy
+                    case GameConstants.SantaAmmoType.COAL:
+                        ammoInfo.type = GameConstants.SantaAmmoType.COAL;
+                        break;
+
+                    case GameConstants.SantaAmmoType.PRESENT:
+                        ammoInfo.type = GameConstants.SantaAmmoType.PRESENT;
+                        break;
+                }
+
+                ammo.gameObject.transform.position = santa.transform.position;
+                ammo.gameObject.SetActive(true);
+            };
+        }
         // Update is called once per frame
         void Update()
         {
+            //Getting input just for testing
+            if (Input.GetKeyDown(KeyCode.A))
+            {
+
+            }
 
         }
 

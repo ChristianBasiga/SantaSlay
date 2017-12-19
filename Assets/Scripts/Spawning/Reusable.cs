@@ -10,7 +10,15 @@ public class Reusable : MonoBehaviour
     //And pool's only job is to aquire and attach event handler that will send them back to pool
     //
     public event EditReusable backToPool;
-   
+    protected int poolID;
+    
+    public int ReuseID
+    {
+        get
+        {
+            return poolID;
+        }
+    }
 
 }
 public delegate void EditReusable();

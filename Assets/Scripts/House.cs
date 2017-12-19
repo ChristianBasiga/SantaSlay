@@ -5,16 +5,15 @@ using UnityEngine;
 
 namespace SantaGame
 {
-    public delegate void AmmoDelegate(int points);
 
     public class House : Reusable
     {
         
-        public event AmmoDelegate AmmoHit;
+        public event Notifier AmmoHit;
 
         private GameConstants.HouseState houseState;
 
-        public House()
+        void Start()
         {
             int rand = Random.Range(5, 25);
 
