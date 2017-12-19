@@ -14,7 +14,7 @@ namespace SantaGame
 
         private GameConstants.HouseState houseState;
 
-        public House()
+        void Start()
         {
             int rand = Random.Range(5, 25);
 
