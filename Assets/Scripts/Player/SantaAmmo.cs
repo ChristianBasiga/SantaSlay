@@ -18,7 +18,6 @@ namespace SantaGame
        
         void Start()
         {
-            poolID = 1;
              
 
         }
@@ -26,6 +25,13 @@ namespace SantaGame
         {
 
 
+        }
+
+        void OnTriggerEnter2D(Collider2D other)
+        {
+            //That's so lame
+
+            BackToPool();
         }
     }
 }
