@@ -56,10 +56,14 @@ namespace SantaGame
             //birdPrefab.ReuseID = 4;
             #endregion
         }
-
+        public Transform boundary;
 
         void Start()
         {
+
+            santa.Width = boundary.localScale.x / 2;
+            santa.Height = boundary.localScale.y / 2;
+
             santa.santa.healthUpdated += (int newHealth) =>
             {
                 if (newHealth <= 0)

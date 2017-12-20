@@ -16,13 +16,30 @@ public class SantaController : MonoBehaviour
     public event AmmoDelegate SantaShot;
 
     private Santa _santa;
-    //rigid component 
-    private Rigidbody2D r2d;
 
+    //Will be set by level or game manager
+    float width;
+    float height;
+
+    public float Width
+    {
+
+        set { width = value; }
+    }
+
+    public float Height
+    {
+        set { height = value; }
+
+    }
+   
 
     //For delay between shots
     public float reloadTime;
     public float timeTillReload;
+
+    //For keeping within boundaries, level manager will just auto push it or can just do here.
+
 
     
 
@@ -36,30 +53,27 @@ public class SantaController : MonoBehaviour
     }
     void Start()
     {
-        r2d = GetComponent<Rigidbody2D>();
 
         _santa = new Santa(10, 0, 5);
     }
-    void FixedUpdate()
+
+    void Update()
     {
-        //This is fine, the foreground will be moving so will look like always moving as well
-        //horizontal
         float moveHorizontal = Input.GetAxis("Horizontal");
 
         //vertical 
         float moveVertical = Input.GetAxis("Vertical");
 
         //vector direction
-        Vector2 movement = new Vector2(moveHorizontal, moveVertical);
+        Vector3 movement = new Vector3(moveHorizontal, moveVertical,0);
 
-        //movement 
-        //r2d.AddForce(movement * _santa.Speed);
-        //For easier testing
-        transform.Translate(movement * _santa.Speed * Time.deltaTime);
-    }
-    void Update()
-    {
+        Vector3 newPos = transform.position + (movement * _santa.Speed * 0.1f);
 
+        //Stay within same position, unity has up for down so don't ned to be engative
+        newPos.y = Mathf.Clamp(newPos.y, -height + (transform.localScale.y), height - (transform.localScale.y));
+        newPos.x = Mathf.Clamp(newPos.x, -width + (transform.localScale.x), width - (transform.localScale.x));
+
+        transform.position = newPos;
         //Just k for testing, will be something else later
         if (Input.GetKeyDown(KeyCode.X))
         {
@@ -112,6 +126,11 @@ public class SantaController : MonoBehaviour
                 BirdHit();
             }
 
+        }
+        else if (other.CompareTag("Boundary"))
+        {
+            Debug.Log("Hello");
+           // transform.Translate(-lastTranslation);
         }
 
     }
