@@ -54,6 +54,7 @@ public class SantaController : MonoBehaviour
 
         //movement 
         //r2d.AddForce(movement * _santa.Speed);
+        //For easier testing
         transform.Translate(movement * _santa.Speed * Time.deltaTime);
     }
     void Update()
@@ -99,8 +100,8 @@ public class SantaController : MonoBehaviour
         if (other.CompareTag("Obstacle"))
         {
             Obstacle obstacleInfo = other.GetComponent<Obstacle>();
-            _santa.Health -= obstacleInfo.Damage;
-            _santa.Speed *= obstacleInfo.SpeedEffect;
+            _santa.Health -= obstacleInfo.damage;
+            _santa.Speed *= obstacleInfo.speedEffect;
 
             //Inheritence may not actually be required for this, just composition with different instnaces of obstacles, will remove those classes
             //Only change is stats and those could be public properties set before hand in the prefabs
