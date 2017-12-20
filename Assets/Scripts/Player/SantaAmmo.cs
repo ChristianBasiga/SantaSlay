@@ -29,7 +29,6 @@ namespace SantaGame
 
         void OnTriggerEnter2D(Collider2D other)
         {
-            //That's so lame
 
             BackToPool();
         }
