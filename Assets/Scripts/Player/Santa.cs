@@ -70,12 +70,13 @@ namespace SantaGame
 
         public void UpdatePoints(int points)
         {
-            if (points < 0)
+            //Cause could pass in -3
+            if (this.points + points < 0)
             {
                 this.points = 0;
             }
             else
-                this.points = points;
+                this.points += points;
 
             if (pointsUpdated == null)
             {

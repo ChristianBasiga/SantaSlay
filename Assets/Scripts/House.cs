@@ -11,7 +11,7 @@ namespace SantaGame
         
         public event Notifier AmmoHit;
 
-        private GameConstants.HouseState houseState;
+        public GameConstants.HouseState houseState;
 
 
         void Awake()

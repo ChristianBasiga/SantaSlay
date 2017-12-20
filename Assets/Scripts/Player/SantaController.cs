@@ -18,7 +18,7 @@ public class SantaController : MonoBehaviour
     private Santa _santa;
     //rigid component 
     private Rigidbody2D r2d;
-    
+
 
     //For delay between shots
     public float reloadTime;
@@ -53,7 +53,8 @@ public class SantaController : MonoBehaviour
         Vector2 movement = new Vector2(moveHorizontal, moveVertical);
 
         //movement 
-        r2d.AddForce(movement * _santa.Speed);
+        //r2d.AddForce(movement * _santa.Speed);
+        transform.Translate(movement * _santa.Speed * Time.deltaTime);
     }
     void Update()
     {
@@ -64,7 +65,6 @@ public class SantaController : MonoBehaviour
             //Test after add that method in there
             _santa.SwitchAmmo();
             //Yup points being updated
-            Debug.Log(_santa.Points);
 
         }
         //Else cause can't shoot and swap ammo at same time
@@ -80,6 +80,8 @@ public class SantaController : MonoBehaviour
         {
             timeTillReload -= Time.deltaTime;
         }
+        Debug.Log(_santa.Points);
+
     }
 
     void Shoot()
@@ -90,7 +92,7 @@ public class SantaController : MonoBehaviour
         SantaShot(santa.dropping);
     }
 
-    void OnTriggerEnter(Collider other)
+    void OnTriggerEnter2D(Collider2D other)
     {
 
         //Obstacle handles itself dying and goign back to pool

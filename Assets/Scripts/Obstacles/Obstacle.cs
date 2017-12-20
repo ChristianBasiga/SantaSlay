@@ -27,7 +27,7 @@ namespace SantaGame {
             {
                 //Kinda messy here, but if dealt damage which si only time this is returned
                 //Then dies and goes back to pool
-                BackToPool();
+               // BackToPool();
                 return damage;
             }
         }

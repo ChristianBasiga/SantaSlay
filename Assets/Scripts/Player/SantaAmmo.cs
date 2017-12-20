@@ -29,8 +29,8 @@ namespace SantaGame
 
         void OnTriggerEnter2D(Collider2D other)
         {
-
-            BackToPool();
+            if (!other.CompareTag("Player"))
+                   BackToPool();
         }
     }
 }
