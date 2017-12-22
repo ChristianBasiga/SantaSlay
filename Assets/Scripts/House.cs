@@ -11,7 +11,7 @@ namespace SantaGame
         
         public event Notifier AmmoHit;
 
-        private GameConstants.HouseState houseState;
+        public GameConstants.HouseState houseState;
 
 
         void Awake()
@@ -20,15 +20,7 @@ namespace SantaGame
 
         void Start()
         {
-            int rand = Random.Range(5, 25);
-
-            if (rand % 2 == 0){
-                houseState = GameConstants.HouseState.NAUGHTY;
-            }
-            else
-            {
-                houseState = GameConstants.HouseState.NICE;
-            }
+            
         }
 
         

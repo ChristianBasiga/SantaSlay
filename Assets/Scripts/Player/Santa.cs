@@ -11,9 +11,9 @@ namespace SantaGame
     {
         //The GameManager will add to this a function to check if health is 0 and create GameOver instance
         //GUI manager will add to this to update GUI accordingly
+        //Perhaps put this event in controller, since health updating is modifying data. Hmm
         public event Notifier healthUpdated;
         public event Notifier pointsUpdated;
-
         private int health;
         private int points;
         private float speed;
@@ -25,6 +25,7 @@ namespace SantaGame
             this.speed = speed;
            
         }
+
 
         public int Health
         {
@@ -69,12 +70,13 @@ namespace SantaGame
 
         public void UpdatePoints(int points)
         {
-            if (points < 0)
+            //Cause could pass in -3
+            if (this.points + points < 0)
             {
                 this.points = 0;
             }
             else
-                this.points = points;
+                this.points += points;
 
             if (pointsUpdated == null)
             {

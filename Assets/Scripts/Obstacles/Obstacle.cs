@@ -9,24 +9,7 @@ namespace SantaGame {
     {
 
         //Don't need events for these since obstacle directly interacting with player unlike houses and ammo
-        private float speedEffect;
-        private int damage;
-
-        public float SpeedEffect
-        {
-            get
-            {
-                return speedEffect;
-            }
-        }
-
-        
-        public int Damage
-        {
-            get
-            {
-                return damage;
-            }
-        }
+        public float speedEffect;
+        public int damage;
     }
 }

@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace SantaGame
 {
+    public delegate void LevelChanged();
     public class GameManager : MonoBehaviour
     {
 
@@ -12,8 +13,16 @@ namespace SantaGame
         //Will handle calling to spawn Obstacles
         // Use this for initialization
 
+        
         SantaController santa;
+
         PoolManager poolManager;
+
+        LevelManager levelManager;
+        public event Notifier ReachedEndOfLevel;
+
+        private int level;
+        private int difficulty;
 
         public SantaAmmo ammoPrefab;
         House housePrefab;
@@ -25,8 +34,8 @@ namespace SantaGame
             santa = GameObject.FindGameObjectWithTag("Player").GetComponent<SantaController>();
             poolManager = GetComponent<PoolManager>();
 
-
-
+            levelManager = GetComponent<LevelManager>();
+           
 
             ammoPrefab = ((GameObject)Resources.Load(string.Format("Prefabs/Ammo/{0}", GameConstants.SantaAmmoType.COAL.ToString()))).GetComponent<SantaAmmo>();
             ammoPrefab.ReuseID = 1;
@@ -49,12 +58,17 @@ namespace SantaGame
             #endregion
         }
 
+        
+
 
         void Start()
         {
-            
+
+            levelManager.ReachedEndOfLevel += () => { this.levelManager.numberOfHouses = (difficulty / 2) * (2 * level + 7); };
+
             InitAmmoPool();
             InitHousePool();
+           
         }
 
 
