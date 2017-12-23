@@ -19,15 +19,14 @@ namespace SantaGame
         PoolManager poolManager;
 
         LevelManager levelManager;
-        public event Notifier ReachedEndOfLevel;
 
         private int level;
         private int difficulty;
 
         public SantaAmmo ammoPrefab;
         House housePrefab;
-        public Bird birdPrefab;
-        public Plane planePrefab;
+        public Obstacle birdPrefab;
+        public Obstacle planePrefab;
 
         void Awake()
         {
@@ -48,11 +47,11 @@ namespace SantaGame
             //Could prob do neater, but at this point just get set up, nly change to make is make enum for diff kinda, but eh. Not needed and at that point mightaswell just
             //not have the derivations but need it for different updates and added functionality of Bird with multiplier, but we'll see. I'll put more thought into this later
             //Want more just done at this point so can start asking someone for art part.
-            birdPrefab = ((GameObject)Resources.Load("Prefabs/Obstacles/Bird")).GetComponent<Bird>();
+            birdPrefab = ((GameObject)Resources.Load("Prefabs/Obstacles/Bird")).GetComponent<Obstacle>();
             birdPrefab.ReuseID = 3;
             poolManager.AddPool(birdPrefab, 4);
 
-            planePrefab = ((GameObject)Resources.Load("Prefabs/Obstacles/Plane")).GetComponent<Plane>();
+            planePrefab = ((GameObject)Resources.Load("Prefabs/Obstacles/Plane")).GetComponent<Obstacle>();
             poolManager.AddPool(planePrefab, 3);
             birdPrefab.ReuseID = 4;
             #endregion
@@ -64,7 +63,8 @@ namespace SantaGame
         void Start()
         {
 
-            levelManager.ReachedEndOfLevel += () => { this.levelManager.numberOfHouses = (difficulty / 2) * (2 * level + 7); };
+            levelManager.ReachedEndOfLevel += () => { this.levelManager.NumberOfHouses = (difficulty / 2) * (2 * level + 7); };
+
 
             InitAmmoPool();
             InitHousePool();

@@ -23,7 +23,6 @@ namespace SantaGame {
         float naughtyChance;
     // Use this for initialization
         void Start() {
-            //Wait cause of closure, don't need to pass it in lol it holds reference to those vars, rather it should if know my shit.
             passedHouses = 0;
         }
 
@@ -31,20 +30,29 @@ namespace SantaGame {
         {
             set
             {
+                
                 numHouses = value;
-                levelChanged();
-
+                passedHouses = 0;
+                //Because only time this changes is when this is et
+            
             }
 
         }
 
         void Update()
         {
-
             //Here it will be constantly checking housesPassed to see of equal to numHouses
             if (passedHouses == numHouses)
             {
-
+                Debug.Log(numHouses);
+                //GameManager Added callback to update numHouses and nice/naughty frequency.
+                ReachedEndOfLevel();
+            }
+            Debug.Log("HOuses passed: " + passedHouses);
+            //WIll be updated on house trigger, but for now just hit key for testing
+            if (Input.GetKeyDown(KeyCode.L))
+            {
+                passedHouses += 1;
             }
         }
 
@@ -54,19 +62,8 @@ namespace SantaGame {
            
         }
 
-        //Todo here, is make sure pool back to full.
-        //Decrease num houses spawned
-        private void levelChanged()
-        {
+      
 
-        }
-
-        public void NextLevel()
-        {
-            currentLevel += 1;
-            //This will update all the base states of obstacles, etc.
-            levelChanged(currentLevel);
-        }
 
     }
 }
