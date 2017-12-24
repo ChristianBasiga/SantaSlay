@@ -102,7 +102,7 @@ public class SantaController : MonoBehaviour
             timeTillReload -= Time.deltaTime;
         }
 
-
+        Debug.Log(_santa.Points);
     }
 
     void Shoot()
@@ -136,7 +136,7 @@ public class SantaController : MonoBehaviour
         }
         else if (other.CompareTag("Boundary"))
         {
-            Debug.Log("Hello");
+
            // transform.Translate(-lastTranslation);
         }
 

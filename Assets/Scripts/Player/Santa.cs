@@ -83,7 +83,7 @@ namespace SantaGame
                 //This is fine, nothing there right now the event handlers for this is going to be GUI for points
                 return;
             }
-            pointsUpdated(points);
+            pointsUpdated(this.points);
         }
 
         public void SwitchAmmo()

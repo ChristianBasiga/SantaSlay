@@ -45,6 +45,7 @@ public class GUIManager : MonoBehaviour {
             healthSprite.sprite = cookieHealthSprites[newHealth];
         };
         */
+        //Rn only ever  updates to current hmm
         santa.pointsUpdated += (int newPoints) => { pointsLabel.text = "Scores: " + newPoints.ToString(); };
     }
 	
