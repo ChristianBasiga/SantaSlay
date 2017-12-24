@@ -94,7 +94,7 @@ public class SantaController : MonoBehaviour
         {
             timeTillReload -= Time.deltaTime;
         }
-        Debug.Log(_santa.Points);
+
 
     }
 
@@ -112,6 +112,7 @@ public class SantaController : MonoBehaviour
         //Obstacle handles itself dying and goign back to pool
         if (other.CompareTag("Obstacle"))
         {
+
             Obstacle obstacleInfo = other.GetComponent<Obstacle>();
             _santa.Health -= obstacleInfo.damage;
             _santa.Speed *= obstacleInfo.speedEffect;

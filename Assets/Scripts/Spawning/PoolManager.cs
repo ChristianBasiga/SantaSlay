@@ -49,8 +49,8 @@ public class PoolManager : MonoBehaviour {
     public void AddPool(Reusable prefab, int buffer)
     {
 
-        if (objectPools.ContainsKey(prefab.ReuseID))
 
+        if (objectPools.ContainsKey(prefab.ReuseID))
         {
             Debug.Log("Already there");
             return;
@@ -90,7 +90,6 @@ public class PoolManager : MonoBehaviour {
     private void Release(Reusable obj)
     {
         obj.gameObject.SetActive(false);
-
         objectPools[obj.ReuseID].Enqueue(obj);
 
 

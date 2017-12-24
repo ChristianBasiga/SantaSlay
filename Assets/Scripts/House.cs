@@ -10,7 +10,9 @@ namespace SantaGame
     {
         
         public event Notifier AmmoHit;
-
+        //Makes sense to be LevelChanged delegate since passing house means level updated in way? Fuck it
+        //reusing cause same signature lol.
+        public event LevelChanged PassedHouse;
         public GameConstants.HouseState houseState;
 
 
@@ -20,15 +22,7 @@ namespace SantaGame
 
         void Start()
         {
-            int rand = Random.Range(5, 25);
-
-            if (rand % 2 == 0){
-                houseState = GameConstants.HouseState.NAUGHTY;
-            }
-            else
-            {
-                houseState = GameConstants.HouseState.NICE;
-            }
+            
         }
 
         
@@ -43,5 +37,14 @@ namespace SantaGame
             }
 
         }
+
+        //For House Border to call
+        public void DidPassHouse()
+        {
+
+            PassedHouse();
+        }
+
+       
     }
 }
