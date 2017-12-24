@@ -10,7 +10,8 @@ namespace SantaGame
         public GameConstants.SantaAmmoType type;
         //Just speed really rn, if want coal that lasts longer will do later
         float speed;
-       
+        public event Notifier HitHouse;
+
 
         Rigidbody2D rb;
 
@@ -29,8 +30,14 @@ namespace SantaGame
 
         void OnTriggerEnter2D(Collider2D other)
         {
-            if (!other.CompareTag("Player") && !other.tag.Contains("Boundary"))
-                   BackToPool();
+            if (other.CompareTag("House"))
+            {
+
+                House house = other.GetComponent<House>();
+                HitHouse(GameConstants.pointWorth[house.houseState][type]);
+                BackToPool();
+
+            }
         }
     }
 }

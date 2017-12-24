@@ -71,12 +71,16 @@ public class GUIManager : MonoBehaviour {
         GameObject[] houses = GameObject.FindGameObjectsWithTag("House");
         Debug.Log(houses.Length);
         //For adding callbacks to update santa face when fuckity the fuck up, yeahhh, won't work since not active. So basically NEEEDDDDDDDD to do add it during pool process but fuck
+        //hmm I could just let SantaController handle sprite of him
+        //I mean that makes sense right? Points and Other GUI is fine but sprite of Santa is something SantaController should control
+        //So could move it from House to Ammo instead,
         foreach (GameObject house in houses)
         {
 
 
             house.GetComponent<House>().AmmoHit += (int pointGain) =>
             {
+                
                 Debug.Log("house hit");
                 if (pointGain < 0)
                 {

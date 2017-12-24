@@ -12,7 +12,6 @@ namespace SantaGame
     public class House : Reusable
     {
         
-        public event Notifier AmmoHit;
         //Makes sense to be LevelChanged delegate since passing house means level updated in way? Fuck it
         //reusing cause same signature lol.
         public event LevelChanged PassedHouse;
@@ -28,20 +27,6 @@ namespace SantaGame
             
         }
         
-        //If this doesn't happen on same time as Ammo before it disappears, then I'll just have SantoAmmo do all this
-        void OnTriggerEnter2D(Collider2D other)
-        {
-            if (other.CompareTag("Ammo"))
-            {
-                SantaAmmo ammoType = other.GetComponent<SantaAmmo>();
-
-                //Easiest quick way is just to have this have ref to GUI manager in here, but fuck man that's lazy and terrible way.
-               
-                AmmoHit(GameConstants.pointWorth[houseState][ammoType.type]);
-            }
-
-        }
-
         //For House Border to call
         public void DidPassHouse()
         {

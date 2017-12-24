@@ -12,6 +12,7 @@ namespace SantaGame
         //The GameManager will add to this a function to check if health is 0 and create GameOver instance
         //GUI manager will add to this to update GUI accordingly
         //Perhaps put this event in controller, since health updating is modifying data. Hmm
+        //Maybe also move these to SantaController, since these being updated is controlling Santa, I believe.
         public event Notifier healthUpdated;
         public event Notifier pointsUpdated;
         private int health;
