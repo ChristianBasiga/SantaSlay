@@ -10,9 +10,18 @@ namespace SantaGame {
     //There will be multiple instances of this object made everytime make new level by GameManger
     public class LevelManager : MonoBehaviour {
 
+
         public Transform background;
         public Transform foreground;
         PoolManager poolManager;
+
+        
+        //GOtta think of better ways to form delegates after this. I shouldn't be making one for every single event.
+        //Though in this case there has been none with this signature of two arguments.
+        public delegate void LevelProgressed(int progress, int goal);
+
+        //Same name event in House, but different purpose and signature, prob confusing but fuck for now.
+        public event LevelProgressed PassedHouse;
 
         //I want to reuse the one in reusable sincree same signature
         int numHouses;
@@ -39,6 +48,19 @@ namespace SantaGame {
             //ToDo here: Find all stuff with position Tag
             //And fill up the list of Vector 3s with those positions
             santa = GameObject.Find("Santa").GetComponent<SantaController>();
+
+            //It might an issue where both are geting pool manager at same time and then adding it to pool
+            //And since this happens last, it no longer has
+            poolManager = GetComponent<PoolManager>();
+
+            //In awake so that GUI can find them and add it's callbacks
+            housePrefab = ((GameObject)Resources.Load("Prefabs/House")).GetComponent<House>();
+            //May actually just change to static oncstants as will start to get More hectic as more pools added.
+            housePrefab.ReuseID = 2;
+            //Could reuse notifier delegate had in MOdel, instead of making new one, but won't effect stuff in here
+            housePrefab.AmmoHit += AddSantaPoints;
+            //No more than 5 seeing at a time
+            poolManager.AddPool(housePrefab, 30);
         }
 
 
@@ -47,18 +69,10 @@ namespace SantaGame {
 
             passedHouses = 0;
             numHouses = 0;
-            //It might an issue where both are geting pool manager at same time and then adding it to pool
-            //And since this happens last, it no longer has
-            poolManager = GetComponent<PoolManager>();
+          
 
             santa.BirdHit += () => { timeLeftMultiplier = multiplierTime; };
-            housePrefab = ((GameObject)Resources.Load("Prefabs/House")).GetComponent<House>();
-            //May actually just change to static oncstants as will start to get More hectic as more pools added.
-            housePrefab.ReuseID = 2;
-            //Could reuse notifier delegate had in MOdel, instead of making new one, but won't effect stuff in here
-            housePrefab.AmmoHit += AddSantaPoints;
-            //No more than 5 seeing at a time
-            poolManager.AddPool(housePrefab, 30);
+          
         }
 
 
@@ -112,15 +126,24 @@ namespace SantaGame {
                 //In here will place position of house in array of positions
                 Reusable house = poolManager.Acquire(housePrefab.ReuseID);
                 //Maybe move event to Controller instead of What's supposed to be just data.
-                       
-                house.GetComponent<House>().AmmoHit += (int points) => { santa.santa.UpdatePoints(points); };
+
+                //That's def something to note, if copy an object. The copied object's event's is new instance with no methods attached to it
+                house.GetComponent<House>().AmmoHit += AddSantaPoints;
                 //Need to create the house spawn points first.
                // house.gameObject.transform.position = houseSpawnPoints[i];
 
                 //Randomly make nice or naughty, since won't depend on level anymore
 
                 //so automatically incremented
-                house.GetComponent<House>().PassedHouse += () => { passedHouses += 1; };
+                house.GetComponent<House>().PassedHouse += () => {
+
+                    passedHouses += 1;
+
+                    Debug.Log("hello");
+                    //For GUI
+                    this.PassedHouse(passedHouses,numHouses);
+
+                };
                 house.gameObject.SetActive(true);
             }
         }

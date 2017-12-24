@@ -6,6 +6,9 @@ using UnityEngine;
 namespace SantaGame
 {
 
+
+    public delegate void LevelChanged();
+
     public class House : Reusable
     {
         
@@ -24,7 +27,6 @@ namespace SantaGame
         {
             
         }
-
         
         //If this doesn't happen on same time as Ammo before it disappears, then I'll just have SantoAmmo do all this
         void OnTriggerEnter2D(Collider2D other)
@@ -32,6 +34,8 @@ namespace SantaGame
             if (other.CompareTag("Ammo"))
             {
                 SantaAmmo ammoType = other.GetComponent<SantaAmmo>();
+
+                //Easiest quick way is just to have this have ref to GUI manager in here, but fuck man that's lazy and terrible way.
                
                 AmmoHit(GameConstants.pointWorth[houseState][ammoType.type]);
             }

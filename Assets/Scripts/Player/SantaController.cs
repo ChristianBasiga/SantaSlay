@@ -102,7 +102,6 @@ public class SantaController : MonoBehaviour
             timeTillReload -= Time.deltaTime;
         }
 
-        Debug.Log(_santa.Points);
     }
 
     void Shoot()

@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace SantaGame
 {
-    public delegate void LevelChanged();
 
     public class GameManager : MonoBehaviour
     {
@@ -46,15 +45,13 @@ namespace SantaGame
         void Awake()
         {
 
+          
             santa = GameObject.FindGameObjectWithTag("Player").GetComponent<SantaController>();
             poolManager = GetComponent<PoolManager>();
 
             levelManager = GetComponent<LevelManager>();
-           
-            if (levelManager == null)
-            {
-                Debug.Log("yup");
-            }
+            
+
             ammoPrefab = ((GameObject)Resources.Load(string.Format("Prefabs/Ammo/{0}", GameConstants.SantaAmmoType.COAL.ToString()))).GetComponent<SantaAmmo>();
             ammoPrefab.ReuseID = 1;
             InitAmmoPool();
@@ -77,9 +74,9 @@ namespace SantaGame
 
         void Start()
         {
-
             level = 1;
             difficulty = 1.0f;
+
 
 
             santa.Width = boundary.localScale.x / 2;
