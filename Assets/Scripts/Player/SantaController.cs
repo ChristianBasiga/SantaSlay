@@ -15,6 +15,9 @@ public class SantaController : MonoBehaviour
     public event AmmoDelegate SantaShot;
     public event Notifier HealthUpdated;
     public event Notifier PointsUpdated;
+
+    private SantaAnimations santaAnimations;
+
     //For before adding it, this will be for Santa face, Points updated gets full points
     //But this one will recieve the points to add as argument, actually I'm stupid I made this change so that won't need event for it
     //Just change ti here cauese Santa Controller will have reference to Sprite of itself, I could make another class called SantaAnimations
@@ -38,26 +41,15 @@ public class SantaController : MonoBehaviour
         set { height = value; }
 
     }
-   
 
     //For delay between shots
     public float reloadTime;
-    public float timeTillReload;
-
-    //For keeping within boundaries, level manager will just auto push it or can just do here.
-
-
-    
+    public float timeTillReload;    
 
     void Awake()
     {
         santa = new Santa(10, 0, 5);
-
-    }
-
-    void Start()
-    {
-
+        santaAnimations = GetComponent<SantaAnimations>();
     }
 
     void Update()
@@ -90,6 +82,7 @@ public class SantaController : MonoBehaviour
         {
             if (timeTillReload <= 0)
             {
+                santaAnimations.SantaShoot();
                 Shoot();
             }
         }
@@ -145,7 +138,9 @@ public class SantaController : MonoBehaviour
 
     public void UpdatePoints(int points)
     {
-        //Cause could pass in -3
+        santaAnimations.UpdateSantaFacial(points);
+
+        //Cause could pass in -3 when got wrong
         if (santa.Points + points < 0)
         {
             santa.Points = 0;
