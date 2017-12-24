@@ -47,6 +47,8 @@ namespace SantaGame {
 
             passedHouses = 0;
             numHouses = 0;
+            //It might an issue where both are geting pool manager at same time and then adding it to pool
+            //And since this happens last, it no longer has
             poolManager = GetComponent<PoolManager>();
 
             santa.BirdHit += () => { timeLeftMultiplier = multiplierTime; };
@@ -140,7 +142,7 @@ namespace SantaGame {
                 //GameManager Added callback to update numHouses and nice/naughty frequency.
                 ReachedEndOfLevel();
             }
-            Debug.Log("Passed Houses: " + passedHouses);
+          //  Debug.Log("Passed Houses: " + passedHouses);
             //WIll be updated on house trigger, but for now just hit key for testing, works
             if (Input.GetKeyDown(KeyCode.L))
             {

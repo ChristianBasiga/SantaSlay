@@ -48,8 +48,9 @@ public class PoolManager : MonoBehaviour {
     //Same here
     public void AddPool(Reusable prefab, int buffer)
     {
+       
 
-
+       
         if (objectPools.ContainsKey(prefab.ReuseID))
         {
             Debug.Log("Already there");
@@ -65,23 +66,31 @@ public class PoolManager : MonoBehaviour {
             created.transform.parent = this.transform;
             objectPools[prefab.ReuseID].Enqueue(created);
         }
-
+     
     }
 
     //This is fine since only passind id
     public Reusable Acquire(int poolID)
     {
-        if (objectPools[poolID].Count > 0)
+
+
+
+        if (objectPools.ContainsKey(poolID))
         {
-            Reusable pooledObj = objectPools[poolID].Peek();
-            objectPools[poolID].Dequeue();
-            pooledObj.backToPool += () => {Release(pooledObj); };
-            return pooledObj;
+            if (objectPools[poolID].Count > 0)
+            {
+                Reusable pooledObj = objectPools[poolID].Peek();
+                objectPools[poolID].Dequeue();
+                pooledObj.ReuseID = poolID;
+                pooledObj.backToPool += () => { Release(pooledObj); };
+                return pooledObj;
+            }
         }
 
+
         return null;
-       
-    }
+    }   
+    
     
   
 
