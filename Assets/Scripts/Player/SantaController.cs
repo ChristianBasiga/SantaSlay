@@ -50,10 +50,17 @@ public class SantaController : MonoBehaviour
             return _santa;
         }
     }
+
+
+    void Awake()
+    {
+        _santa = new Santa(10, 0, 5);
+
+    }
+
     void Start()
     {
 
-        _santa = new Santa(10, 0, 5);
     }
 
     void Update()

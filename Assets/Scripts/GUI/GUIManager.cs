@@ -3,26 +3,49 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+using SantaGame;
+
 public class GUIManager : MonoBehaviour {
 
-    public Slider santaHP;
+
+    
+
     public Text pointsLabel;
     Santa santa;
+
+    //Will be textures of all them cookies.
+    private Sprite[] cookieHealthSprites;
+    public SpriteRenderer healthSprite;
+
 
 
     void Awake()
     {
-        santa = GameObject.FindGameObjectWithTag("Player").GetComponent<SantaController>().santa;
+        //Or maybe instead of obstacles, when loses points also loses a cookie.
+        //But could have obstacles too
+        //cookieHealthSprites = Resources.LoadAll<Sprite>("Cookies");
+      
+      //  healthSprite = player.GetComponent<SpriteRenderer>();
     }
 	// Use this for initialization
 	void Start () {
 
-        //Todo: Test these to make sure call backs working right
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
 
-        santaHP.maxValue = santa.Health;
+        santa = player.GetComponent<SantaController>().santa;
 
-        santa.healthUpdated += (int newHealth) => { santaHP.value = newHealth; };
-        santa.pointsUpdated += (int newPoints) => { pointsLabel.text = "Scores: " + newHealth.ToString(); };
+        if (santa == null)
+        {
+            Debug.Log("something up");
+        }
+
+
+        /*santa.healthUpdated += (int newHealth) => {
+
+            healthSprite.sprite = cookieHealthSprites[newHealth];
+        };
+        */
+        santa.pointsUpdated += (int newPoints) => { pointsLabel.text = "Scores: " + newPoints.ToString(); };
     }
 	
 	// Update is called once per frame

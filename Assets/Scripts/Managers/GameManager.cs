@@ -51,7 +51,10 @@ namespace SantaGame
 
             levelManager = GetComponent<LevelManager>();
            
-
+            if (levelManager == null)
+            {
+                Debug.Log("yup");
+            }
             ammoPrefab = ((GameObject)Resources.Load(string.Format("Prefabs/Ammo/{0}", GameConstants.SantaAmmoType.COAL.ToString()))).GetComponent<SantaAmmo>();
             ammoPrefab.ReuseID = 1;
             InitAmmoPool();
@@ -151,15 +154,18 @@ namespace SantaGame
                 ammo.gameObject.SetActive(true);
             };
         }
-        // Update is called once per frame
-        void Update()
+        
+
+        //For buttons to call.
+        public void Pause()
         {
-            
 
         }
 
+        public void Play()
+        {
 
-      
+        }
 
 
         void spawnObstacle()
