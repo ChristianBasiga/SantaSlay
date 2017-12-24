@@ -57,8 +57,7 @@ namespace SantaGame {
             housePrefab = ((GameObject)Resources.Load("Prefabs/House")).GetComponent<House>();
             //May actually just change to static oncstants as will start to get More hectic as more pools added.
             housePrefab.ReuseID = 2;
-            //Could reuse notifier delegate had in MOdel, instead of making new one, but won't effect stuff in here
-            housePrefab.AmmoHit += AddSantaPoints;
+
             //No more than 5 seeing at a time
             poolManager.AddPool(housePrefab, 30);
         }
@@ -90,7 +89,7 @@ namespace SantaGame {
             Debug.Log("Points:" + points);
 
             //Then updates actual points;
-            santa.santa.UpdatePoints(points);
+            santa.UpdatePoints(points);
 
         }
 
@@ -127,8 +126,7 @@ namespace SantaGame {
                 Reusable house = poolManager.Acquire(housePrefab.ReuseID);
                 //Maybe move event to Controller instead of What's supposed to be just data.
 
-                //That's def something to note, if copy an object. The copied object's event's is new instance with no methods attached to it
-                house.GetComponent<House>().AmmoHit += AddSantaPoints;
+                
                 //Need to create the house spawn points first.
                // house.gameObject.transform.position = houseSpawnPoints[i];
 

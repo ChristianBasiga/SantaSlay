@@ -13,8 +13,8 @@ namespace SantaGame
         //GUI manager will add to this to update GUI accordingly
         //Perhaps put this event in controller, since health updating is modifying data. Hmm
         //Maybe also move these to SantaController, since these being updated is controlling Santa, I believe.
-        public event Notifier healthUpdated;
-        public event Notifier pointsUpdated;
+
+      
         private int health;
         private int points;
         private float speed;
@@ -44,7 +44,6 @@ namespace SantaGame
                 else
                     health = value;
 
-                healthUpdated(health);
             }
         }
 
@@ -67,25 +66,13 @@ namespace SantaGame
             {
                 return points;
             }
+            set
+            {
+                points = value;
+            }
         }
 
-        public void UpdatePoints(int points)
-        {
-            //Cause could pass in -3
-            if (this.points + points < 0)
-            {
-                this.points = 0;
-            }
-            else
-                this.points += points;
-
-            if (pointsUpdated == null)
-            {
-                //This is fine, nothing there right now the event handlers for this is going to be GUI for points
-                return;
-            }
-            pointsUpdated(this.points);
-        }
+      
 
         public void SwitchAmmo()
         {

@@ -13,7 +13,7 @@ public class GUIManager : MonoBehaviour {
     public Text pointsLabel;
     public Text levelProgressLabel;
 
-    Santa santa;
+    SantaController santa;
 
     //Will be textures of all them cookies.
     private Sprite[] cookieHealthSprites;
@@ -34,21 +34,15 @@ public class GUIManager : MonoBehaviour {
 
         GameObject player = GameObject.FindGameObjectWithTag("Player");
 
-        santa = player.GetComponent<SantaController>().santa;
+      
 
-        if (santa == null)
-        {
-            Debug.Log("something up");
-        }
-
-
-        /*santa.healthUpdated += (int newHealth) => {
+        /*santa.HealthUpdated += (int newHealth) => {
 
             healthSprite.sprite = cookieHealthSprites[newHealth];
         };
         */
         //Rn only ever  updates to current hmm
-        santa.pointsUpdated += (int newPoints) => { pointsLabel.text = "Scores: " + newPoints.ToString(); };
+        santa.PointsUpdated += (int newPoints) => { pointsLabel.text = "Scores: " + newPoints.ToString(); };
 
         //ToDo: Play corresponding change in facial expression if get wrong or right ammo hit
         //Hmmmm
@@ -74,7 +68,7 @@ public class GUIManager : MonoBehaviour {
         //hmm I could just let SantaController handle sprite of him
         //I mean that makes sense right? Points and Other GUI is fine but sprite of Santa is something SantaController should control
         //So could move it from House to Ammo instead,
-        foreach (GameObject house in houses)
+       /* foreach (GameObject house in houses)
         {
 
 
@@ -94,7 +88,7 @@ public class GUIManager : MonoBehaviour {
                     //Display santa happeh
                 }
             };
-        }
+        }*/
     }
 	
 	// Update is called once per frame

@@ -13,8 +13,15 @@ public class SantaController : MonoBehaviour
 
     public delegate void AmmoDelegate(GameConstants.SantaAmmoType ammoType);
     public event AmmoDelegate SantaShot;
+    public event Notifier HealthUpdated;
+    public event Notifier PointsUpdated;
+    //For before adding it, this will be for Santa face, Points updated gets full points
+    //But this one will recieve the points to add as argument, actually I'm stupid I made this change so that won't need event for it
+    //Just change ti here cauese Santa Controller will have reference to Sprite of itself, I could make another class called SantaAnimations
+    //That will handle it, which not bad idea., fuck it 'etls do that.
+   // public event Notifier PointsWillUpdate;
 
-    private Santa _santa;
+    private Santa santa;
 
     //Will be set by level or game manager
     float width;
@@ -42,19 +49,9 @@ public class SantaController : MonoBehaviour
 
     
 
-
-    
-    public Santa santa {
-
-        get {
-            return _santa;
-        }
-    }
-
-
     void Awake()
     {
-        _santa = new Santa(10, 0, 5);
+        santa = new Santa(10, 0, 5);
 
     }
 
@@ -73,7 +70,7 @@ public class SantaController : MonoBehaviour
         //vector direction
         Vector3 movement = new Vector3(moveHorizontal, moveVertical,0);
 
-        Vector3 newPos = transform.position + (movement * _santa.Speed * 0.1f);
+        Vector3 newPos = transform.position + (movement * santa.Speed * 0.1f);
 
         //Stay within same position, unity has up for down so don't ned to be engative
         newPos.y = Mathf.Clamp(newPos.y, -height + (transform.localScale.y), height - (transform.localScale.y));
@@ -84,7 +81,7 @@ public class SantaController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.X))
         {
             //Test after add that method in there
-            _santa.SwitchAmmo();
+            santa.SwitchAmmo();
             //Yup points being updated
 
         }
@@ -101,6 +98,7 @@ public class SantaController : MonoBehaviour
         {
             timeTillReload -= Time.deltaTime;
         }
+
 
     }
 
@@ -120,8 +118,8 @@ public class SantaController : MonoBehaviour
         {
 
             Obstacle obstacleInfo = other.GetComponent<Obstacle>();
-            _santa.Health -= obstacleInfo.damage;
-            _santa.Speed *= obstacleInfo.speedEffect;
+            santa.Health -= obstacleInfo.damage;
+            santa.Speed *= obstacleInfo.speedEffect;
 
             //Inheritence may not actually be required for this, just composition with different instnaces of obstacles, will remove those classes
             //Only change is stats and those could be public properties set before hand in the prefabs
@@ -140,4 +138,28 @@ public class SantaController : MonoBehaviour
         }
 
     }
+
+
+    #region Public Methods
+
+
+    public void UpdatePoints(int points)
+    {
+        //Cause could pass in -3
+        if (santa.Points + points < 0)
+        {
+            santa.Points = 0;
+        }
+        else
+            santa.Points += points;
+
+        if (PointsUpdated == null)
+        {
+            //This is fine, nothing there right now the event handlers for this is going to be GUI for points
+            return;
+        }
+        PointsUpdated(santa.Points);
+    }
+
+    #endregion
 }

@@ -82,7 +82,7 @@ namespace SantaGame
             santa.Width = boundary.localScale.x / 2;
             santa.Height = boundary.localScale.y / 2;
 
-            santa.santa.healthUpdated += (int newHealth) =>
+            santa.HealthUpdated += (int newHealth) =>
             {
                 if (newHealth <= 0)
                 {
