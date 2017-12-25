@@ -68,6 +68,7 @@ namespace SantaGame {
 
             passedHouses = 0;
             numHouses = 0;
+            
           
 
             santa.BirdHit += () => { timeLeftMultiplier = multiplierTime; };
@@ -99,6 +100,10 @@ namespace SantaGame {
             {
                 numHouses = value;
                 passedHouses = 0;
+
+                //For GUI
+                PassedHouse(passedHouses,numHouses);
+
                 //Because only time this changes is when time to go to next level.
 
                 //Actually better than iterating through all objects
@@ -160,7 +165,6 @@ namespace SantaGame {
             //Here it will be constantly checking housesPassed to see of equal to numHouses
             if (passedHouses == numHouses)
             {
-                //GameManager Added callback to update numHouses and nice/naughty frequency.
                 ReachedEndOfLevel();
             }
           //  Debug.Log("Passed Houses: " + passedHouses);

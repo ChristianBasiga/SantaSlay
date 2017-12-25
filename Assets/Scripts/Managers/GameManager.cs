@@ -96,8 +96,11 @@ namespace SantaGame
             levelManager.ReachedEndOfLevel += () => {
 
 
-                //Rightt, cause primitives are value not reference types so always the same so closure doesn't apply here, unless make small inner class to hold these values lol.
+                GUIManager guiManager = GetComponent<GUIManager>();
+                guiManager.currentLevelLabel.text = string.Format("Level: {0}", level);
                 this.levelManager.NumberOfHouses = (int)(((difficulty / 2) * (2.0f * level + 7)) + 1);
+
+                //Incrementing for next time need to update.
                 level += 1;
             };
 
@@ -106,13 +109,7 @@ namespace SantaGame
 
             levelManager.ReachedEndOfLevel += () =>
             {
-
-                //The number of houses spawned was perfect in terms of deriving an equation for it 
-                //But chance of Naughty, it's hardest at uniform distribution caues never know
-                //And I can't think of an equation that would go up, down, and finish at center. Unless maybe sine wave but not really
-                //Easiest, in terms of just getting done cause people won't care bout this detail, just  adictionary might suffice for this
-                //and in that case
-
+                
 
             };
 
