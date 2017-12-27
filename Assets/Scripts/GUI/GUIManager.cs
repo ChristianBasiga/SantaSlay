@@ -15,8 +15,9 @@ public class GUIManager : MonoBehaviour {
     public event Notifier DifficultyChanged;
     public event ButtonPressed QuitPressed;
 
-    
 
+
+    public Image loadingScreen;
     public Text pointsLabel;
     public Text levelProgressLabel;
     public Text currentLevelLabel;
@@ -37,11 +38,16 @@ public class GUIManager : MonoBehaviour {
 
         //  healthSprite = player.GetComponent<SpriteRenderer>();
 
-
-        Scene scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
-
+        //Both MainScene and Titlescreen will have loading Screens.
+        //MainScene will be after every level, Title will be when first entering game.
+        if (loadingScreen != null)
+            loadingScreen.gameObject.SetActive(false);
+        else
+        {
+            Debug.Log("No loading screen referenced");
+        }
         //Don't need to do all that if TitleScreen or GameOver, basicaly if  not MainScene
-        if (scene.name != "Main")
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Main")
             return;
 
         santa = GameObject.FindGameObjectWithTag("Player").GetComponent<SantaController>();
