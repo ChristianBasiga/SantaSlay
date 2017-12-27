@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace SantaGame
 {
@@ -8,22 +9,15 @@ namespace SantaGame
     public class GameManager : MonoBehaviour
     {
 
-        //GameManager will have a SantaController reference.
-        //Will handle calling to spawn Houses
-        //Will handle calling to spawn Obstacles
-        // Use this for initialization
 
-        
+        public static GameManager instance;
+
         SantaController santa;
+        
+        private int level;
+        private int difficulty;
 
-        PoolManager poolManager;
-
-        LevelManager levelManager;
-
-        //Make inner class strictly for the lambda to have closure with reference to level and all that.
       
-        int level;
-        float difficulty;
         //Wait since all one image, I can't have this difference. Hmm. Fuck. I'll talk to Kris bout this.
         //FUck this for now, it works now to get it spawning, wait spawning is not a fucking thing cause it's all drawn out
         //Okay, no I can make this work. Instead of spawning house prefab with picture, it'll have no render and just spawn empty game Object with collider and HOuse script on it
@@ -44,77 +38,105 @@ namespace SantaGame
 
         void Awake()
         {
+            if (instance == null)
+            {
+                instance = this;
+            }
+            else if (instance != this)
+            {
+                Destroy(gameObject);
+            }
 
-          
             santa = GameObject.FindGameObjectWithTag("Player").GetComponent<SantaController>();
-            poolManager = GetComponent<PoolManager>();
+            SceneManager.sceneLoaded += OnSceneLoaded;
 
-            levelManager = GetComponent<LevelManager>();
-            
-
-            ammoPrefab = ((GameObject)Resources.Load(string.Format("Prefabs/Ammo/{0}", GameConstants.SantaAmmoType.COAL.ToString()))).GetComponent<SantaAmmo>();
-            ammoPrefab.ReuseID = 1;
-            InitAmmoPool();
-
-            //Could prob do neater, but at this point just get set up, nly change to make is make enum for diff kinda, but eh. Not needed and at that point mightaswell just
-            //not have the derivations but need it for different updates and added functionality of Bird with multiplier, but we'll see. I'll put more thought into this later
-            /* //Want more just done at this point so can start asking someone for art part.
-             birdPrefab = ((GameObject)Resources.Load("Prefabs/Obstacles/Bird")).GetComponent<Obstacle>();
-             birdPrefab.ReuseID = 3;
-             poolManager.AddPool(birdPrefab, 4);
-
-             planePrefab = ((GameObject)Resources.Load("Prefabs/Obstacles/Plane")).GetComponent<Obstacle>();
-             poolManager.AddPool(planePrefab, 3);
-             birdPrefab.ReuseID = 4;
-             #endregion*/
+            //For transitioning from TitleScreent o actual Game Scene. Levels will not be scene transitions.
+            DontDestroyOnLoad(gameObject);
+          
         }
-
-
-
 
         void Start()
         {
             level = 1;
-            difficulty = 1.0f;
+            Debug.Log(difficulty);
+        }
 
 
+        void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
 
-            santa.Width = boundary.localScale.x / 2;
-            santa.Height = boundary.localScale.y / 2;
+            GUIManager guiManager = GetComponent<GUIManager>();
 
-            santa.HealthUpdated += (int newHealth) =>
+            switch (scene.name)
             {
-                if (newHealth <= 0)
-                {
-                    GameOver();
-                }
-            };
+                case "TitleScreen":
 
 
-            
+                    //In titlescreen because they can decide on difficulty before entering game
 
-            levelManager.ReachedEndOfLevel += () => {
+                    guiManager.DifficultyChanged += (int newDiff) => { this.difficulty = newDiff; };
+                    guiManager.QuitPressed += () => {
 
+                        Application.Quit();
 
-                GUIManager guiManager = GetComponent<GUIManager>();
-                guiManager.currentLevelLabel.text = string.Format("Level: {0}", level);
-                this.levelManager.NumberOfHouses = (int)(((difficulty / 2) * (2.0f * level + 7)) + 1);
+                    };
 
-                //Incrementing for next time need to update.
-                level += 1;
-            };
+                    break;
 
-
+                case "Main":
 
 
-            levelManager.ReachedEndOfLevel += () =>
-            {
-                
-
-            };
+                    #region Santa Boundary and setting GameOver callback
 
 
-           
+                    santa.Width = boundary.localScale.x / 2;
+                    santa.Height = boundary.localScale.y / 2;
+
+                    santa.HealthUpdated += (int newHealth) =>
+                    {
+                        if (newHealth <= 0)
+                        {
+                            GameOver();
+                        }
+                    };
+
+                    #endregion
+
+                    #region Assigning LevelManager Callbacks
+
+                    LevelManager levelManager = GetComponent<LevelManager>();
+
+                    //When reach end of level, need to update num houses and everything for next one.
+                    levelManager.ReachedEndOfLevel += () => {
+
+                        //GUi manager should be doing this, but fuck it, it's public
+                        guiManager.currentLevelLabel.text = "Level: " + level.ToString();
+                        levelManager.NumberOfHouses = (int)(((difficulty / 2.0f) * (2.0f * level + 7)) + 1);
+
+                        //Incrementing for next time need to update.
+                        level += 1;
+                    };
+
+                    #endregion
+
+                    #region Assignign GUIManager Callbacks
+                    //Temp, cause don't need to use again outside of assigning callbacks
+
+                    guiManager.PausePressed += () => {
+
+                        santa.enabled = !santa.enabled;
+
+                    };
+
+                    #endregion 
+
+                    InitAmmoPool();      
+                    
+
+                    break;
+
+
+            }
         }
 
         //TO follow suit of LevelManager, I could even have SantaControler have PoolManager
@@ -122,7 +144,12 @@ namespace SantaGame
         private void InitAmmoPool()
         {
 
-          
+
+            PoolManager poolManager = GetComponent<PoolManager>();
+
+            ammoPrefab = ((GameObject)Resources.Load(string.Format("Prefabs/Ammo/{0}", GameConstants.SantaAmmoType.COAL.ToString()))).GetComponent<SantaAmmo>();
+            ammoPrefab.ReuseID = 1;
+
             //Only one pool for ammo, will use prototypes to switch between
             poolManager.AddPool(ammoPrefab, 10);
 
@@ -144,21 +171,13 @@ namespace SantaGame
                         break;
                 }
 
+                ammoInfo.HitHouse += santa.UpdatePoints;
+
                 ammo.gameObject.transform.position = santa.transform.position;
                 ammo.gameObject.SetActive(true);
             };
-        }
-        
 
-        //For buttons to call.
-        public void Pause()
-        {
-
-        }
-
-        public void Play()
-        {
-
+            santa.UpdatePoints(0);
         }
 
 

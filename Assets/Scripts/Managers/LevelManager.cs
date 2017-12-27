@@ -32,7 +32,14 @@ namespace SantaGame {
         private List<Vector3> houseSpawnPoints;
 
         //Will pass in next level and current difficulty by calling callback as soon as current houses went through 0.
+        //GUI manager needs to add it's own callback here to load the loading screen while next level getting set up.
+        //Event for End of Level and time to load next.
         public event LevelChanged ReachedEndOfLevel;
+
+        //This event for when Level is Loaded
+        public event LevelChanged LoadedLevel;
+
+
         //At maximum would be 50%
         float naughtyChance;
 
@@ -68,31 +75,13 @@ namespace SantaGame {
 
             passedHouses = 0;
             numHouses = 0;
-            
-          
-
             santa.BirdHit += () => { timeLeftMultiplier = multiplierTime; };
+            ReachedEndOfLevel();
           
         }
 
 
-        //Forward function for multiplier, so we can do more to points given before updating points
-        private void AddSantaPoints(int points)
-        {
-
-            if (timeLeftMultiplier > 0)
-            {
-
-                //Just doubling for now
-                points *= 2;
-                Debug.Log("Hello");
-            }
-            Debug.Log("Points:" + points);
-
-            //Then updates actual points;
-            santa.UpdatePoints(points);
-
-        }
+        
 
         public int NumberOfHouses
         {
@@ -104,26 +93,15 @@ namespace SantaGame {
                 //For GUI
                 PassedHouse(passedHouses,numHouses);
 
-                //Because only time this changes is when time to go to next level.
-
-                //Actually better than iterating through all objects
-                //woudl be to add callback to LevelChanged that has the House automatically brign itself back to pool, and I'll add when spawn it
-                //So only loop needed is just respawning everything into place
-                //Scratch, could just do it on TriggerExit, alot better
                 spawnHouses();
+
+                LoadedLevel();
             }
 
         }
 
         private void spawnHouses()
         {
-            //If always make random requires nested loop, with list that gets bigger
-            //The positions themselves don't need to be chosen at random. The house status is.
-            //Can just change state randomly and place in each position
-            
-            //Sucks that search for santa everytime new level, but fuck it. I could make it local to class but hmm
-            //Anyway their query should optomized to find it quick on unique identifiers like names. Should be.
-            //So not really that slow, as in not iterating though ALL objects in scene to find Santa name, or shouldn't be
           
             for (int i = 0; i < numHouses; ++i)
             {
@@ -165,13 +143,8 @@ namespace SantaGame {
             //Here it will be constantly checking housesPassed to see of equal to numHouses
             if (passedHouses == numHouses)
             {
-                ReachedEndOfLevel();
-            }
-          //  Debug.Log("Passed Houses: " + passedHouses);
-            //WIll be updated on house trigger, but for now just hit key for testing, works
-            if (Input.GetKeyDown(KeyCode.L))
-            {
-                passedHouses += 1;
+                if (ReachedEndOfLevel != null)
+                    ReachedEndOfLevel();
             }
 
             if (timeLeftMultiplier > 0)

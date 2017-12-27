@@ -34,7 +34,10 @@ namespace SantaGame
             {
 
                 House house = other.GetComponent<House>();
-                HitHouse(GameConstants.pointWorth[house.houseState][type]);
+                if (HitHouse != null)
+                    HitHouse(GameConstants.pointWorth[house.houseState][type]);
+
+
                 BackToPool();
 
             }

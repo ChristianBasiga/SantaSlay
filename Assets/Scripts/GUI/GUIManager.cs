@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 using SantaGame;
 
@@ -10,7 +11,7 @@ public class GUIManager : MonoBehaviour {
     public delegate void ButtonPressed();
 
     //events for these cause GameManager needs to do stuff when this happens
-    //as well as SantaController, whatever else needs to be notified of these events.
+    //as well as SantaController, whatever else needs to be notified of these events    
     public event ButtonPressed PausePressed;
     public event Notifier DifficultyChanged;
     public event ButtonPressed QuitPressed;
@@ -18,6 +19,8 @@ public class GUIManager : MonoBehaviour {
 
 
     public Image loadingScreen;
+    private bool doneLoading;
+
     public Text pointsLabel;
     public Text levelProgressLabel;
     public Text currentLevelLabel;
@@ -32,47 +35,64 @@ public class GUIManager : MonoBehaviour {
 
     void Awake()
     {
-        //Or maybe instead of obstacles, when loses points also loses a cookie.
-        //But could have obstacles too
-        //cookieHealthSprites = Resources.LoadAll<Sprite>("Cookies");
+        loadingScreen.gameObject.SetActive(false);
+        SceneManager.sceneLoaded += OnSceneLoaded;
 
-        //  healthSprite = player.GetComponent<SpriteRenderer>();
+    }
 
-        //Both MainScene and Titlescreen will have loading Screens.
-        //MainScene will be after every level, Title will be when first entering game.
-        if (loadingScreen != null)
-            loadingScreen.gameObject.SetActive(false);
-        else
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        doneLoading = true;
+
+        if (scene.name == "TitleScreen")
         {
-            Debug.Log("No loading screen referenced");
+
         }
-        //Don't need to do all that if TitleScreen or GameOver, basicaly if  not MainScene
-        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Main")
-            return;
+        else if (scene.name == "Main")
+        {
 
-        santa = GameObject.FindGameObjectWithTag("Player").GetComponent<SantaController>();
+            //cookieHealthSprites = Resources.LoadAll<Sprite>("Cookies");
 
-        santa.PointsUpdated += (int newPoints) => { pointsLabel.text = "Points: " + newPoints.ToString(); };
+            //  healthSprite = player.GetComponent<SpriteRenderer>();
+
+            santa = GameObject.FindGameObjectWithTag("Player").GetComponent<SantaController>();
+
+            santa.PointsUpdated += (int newPoints) => { pointsLabel.text = "Points: " + newPoints.ToString(); };
 
 
-        LevelManager lm = GetComponent<LevelManager>();
-        lm.PassedHouse += (int currentProgress, int goal) => { levelProgressLabel.text = string.Format("Houses Passed: {0} / {1}", currentProgress, goal); };
+            #region Assigning LevelManager Callbacks
+            LevelManager lm = GetComponent<LevelManager>();
 
+            lm.PassedHouse += (int currentProgress, int goal) => { levelProgressLabel.text = string.Format("Houses Passed: {0} / {1}", currentProgress, goal); };
+
+            lm.ReachedEndOfLevel += () =>
+            {
+               
+                doneLoading = false;
+                StartCoroutine(loadLoadingScreen());
+
+            };
+
+            lm.LoadedLevel += () =>
+            {
+                doneLoading = true;
+            };
+
+            #endregion
+
+        }
 
 
     }
-    // Use this for initialization
-    void Start () {
-        /*santa.HealthUpdated += (int newHealth) => {
 
-            healthSprite.sprite = cookieHealthSprites[newHealth];
-        };
-        */
-        //Just realized think accidently removed the housesPassed/ num houses shit
-
-
+    IEnumerator loadLoadingScreen()
+    {
+        loadingScreen.gameObject.SetActive(true);
+        //Here need to yield until done loading everything
+        yield return new WaitUntil(() => doneLoading);
+        loadingScreen.gameObject.SetActive(false);
     }
-
+    
 
     public void Pause()
     {

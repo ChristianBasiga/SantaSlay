@@ -28,6 +28,7 @@ public class SantaController : MonoBehaviour
 
     //Will be set by level or game manager
     float width;
+    int yoyo = 5;
     float height;
 
     public float Width
@@ -44,12 +45,14 @@ public class SantaController : MonoBehaviour
 
     //For delay between shots
     public float reloadTime;
-    public float timeTillReload;    
+    public float timeTillReload;
 
-    void Awake()
+    //OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    void Start()
     {
         santa = new Santa(10, 0, 5);
         santaAnimations = GetComponent<SantaAnimations>();
+        PointsUpdated(santa.Points);
     }
 
     void Update()
@@ -75,7 +78,8 @@ public class SantaController : MonoBehaviour
             //Test after add that method in there
             santa.SwitchAmmo();
             //Yup points being updated
-
+            //UpdatePoints(5);
+            //Debug.Log(santa.Points);
         }
         //Else cause can't shoot and swap ammo at same time
         else if (Input.GetKeyDown(KeyCode.Z))
@@ -138,22 +142,19 @@ public class SantaController : MonoBehaviour
 
     public void UpdatePoints(int points)
     {
-        santaAnimations.UpdateSantaFacial(points);
+        // santaAnimations.UpdateSantaFacial(points);
 
         //Cause could pass in -3 when got wrong
+        if (points == 0)
+            return;
+
         if (santa.Points + points < 0)
-        {
             santa.Points = 0;
-        }
         else
             santa.Points += points;
 
-        if (PointsUpdated == null)
-        {
-            //This is fine, nothing there right now the event handlers for this is going to be GUI for points
-            return;
-        }
-        PointsUpdated(santa.Points);
+        if (PointsUpdated != null)
+            PointsUpdated(santa.Points);
     }
 
     #endregion
