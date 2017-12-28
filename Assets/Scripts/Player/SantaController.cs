@@ -28,7 +28,6 @@ public class SantaController : MonoBehaviour
 
     //Will be set by level or game manager
     float width;
-    int yoyo = 5;
     float height;
 
     public float Width

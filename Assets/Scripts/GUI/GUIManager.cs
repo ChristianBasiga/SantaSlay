@@ -38,7 +38,6 @@ public class GUIManager : MonoBehaviour {
         loadingScreen.gameObject.SetActive(false);
         SceneManager.sceneLoaded += OnSceneLoaded;
 
-        DontDestroyOnLoad(gameObject);
 
     }
 
@@ -76,8 +75,6 @@ public class GUIManager : MonoBehaviour {
             {
                
                 doneLoading = false;
-               // StartCoroutine(loadLoadingScreen());
-
             };
 
             lm.LoadedLevel += () =>
@@ -124,5 +121,10 @@ public class GUIManager : MonoBehaviour {
     {
         //Cause need to pass in the new difficulty chosen, so that GameManager won't ahve to search for it.
         DifficultyChanged(newDiff);
+    }
+
+    public void GameOverTriggered()
+    {
+
     }
 }

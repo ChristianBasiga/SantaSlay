@@ -62,8 +62,8 @@ namespace SantaGame
 
 
                     //In titlescreen because they can decide on difficulty before entering game
-
-                    guiManager.DifficultyChanged += (int newDiff) => { this.difficulty = (float)newDiff; Debug.Log("diff is: " +difficulty);};
+                    //This is fine as this cause only one instance at this point
+                    guiManager.DifficultyChanged += (int newDiff) => { instance.difficulty = (float)newDiff; };
                     guiManager.QuitPressed += () => {
 
                         Application.Quit();
@@ -100,10 +100,9 @@ namespace SantaGame
                     levelManager.ReachedEndOfLevel += () => {
 
                         //GUi manager should be doing this, but fuck it, it's public
-                        guiManager.currentLevelLabel.text = "Level: " + level.ToString();
+                        guiManager.currentLevelLabel.text = "Level: " + instance.level.ToString();
                         levelManager.NumberOfHouses =  (int)(((instance.difficulty / 2) * (2.0f * instance.level + 7)) + 1);
-                        //How is it 0? When in update it's saying it's clearly 5.
-                        //Incrementing for next time need to update.
+
                         instance.level += 1;
                     };
 
@@ -157,7 +156,6 @@ namespace SantaGame
                 SantaAmmo ammoInfo = ammo.GetComponent<SantaAmmo>();
                 switch (type)
                 {
-                    //Prob like arrays where by reference until change then is copy
                     case GameConstants.SantaAmmoType.COAL:
                         ammoInfo.type = GameConstants.SantaAmmoType.COAL;
                         break;
@@ -180,20 +178,15 @@ namespace SantaGame
         //For the button, need to add the neccessarry components
         public void Play()
         {
+            //Depreacted: Decided to just have objects that ahve these aleady in mainscene
             gameObject.AddComponent(typeof(LevelManager));
             gameObject.AddComponent(typeof(PoolManager));
 
         }
 
-       
-
-        void spawnObstacle()
-        {
-
-        }
-
         void GameOver()
         {
+
 
         }
     }
