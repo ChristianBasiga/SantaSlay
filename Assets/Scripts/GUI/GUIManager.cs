@@ -38,6 +38,8 @@ public class GUIManager : MonoBehaviour {
         loadingScreen.gameObject.SetActive(false);
         SceneManager.sceneLoaded += OnSceneLoaded;
 
+        DontDestroyOnLoad(gameObject);
+
     }
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -55,13 +57,18 @@ public class GUIManager : MonoBehaviour {
 
             //  healthSprite = player.GetComponent<SpriteRenderer>();
 
+            //Tbh just different scripts would've looked alot cleaner than this
+            //but hindsight, not erasing
+            pointsLabel = GameObject.Find("PointsLabel").GetComponent<Text>();
+            levelProgressLabel = GameObject.Find("LevelProgressLabel").GetComponent<Text>();
+            currentLevelLabel = GameObject.Find("LevelLabel").GetComponent<Text>();
+
             santa = GameObject.FindGameObjectWithTag("Player").GetComponent<SantaController>();
 
             santa.PointsUpdated += (int newPoints) => { pointsLabel.text = "Points: " + newPoints.ToString(); };
 
-
             #region Assigning LevelManager Callbacks
-            LevelManager lm = GetComponent<LevelManager>();
+            LevelManager lm = GameObject.Find("LevelManager").GetComponent<LevelManager>();
 
             lm.PassedHouse += (int currentProgress, int goal) => { levelProgressLabel.text = string.Format("Houses Passed: {0} / {1}", currentProgress, goal); };
 
@@ -69,7 +76,7 @@ public class GUIManager : MonoBehaviour {
             {
                
                 doneLoading = false;
-                StartCoroutine(loadLoadingScreen());
+               // StartCoroutine(loadLoadingScreen());
 
             };
 
@@ -87,10 +94,11 @@ public class GUIManager : MonoBehaviour {
 
     IEnumerator loadLoadingScreen()
     {
-        loadingScreen.gameObject.SetActive(true);
+        //loadingScreen.gameObject.SetActive(true);
         //Here need to yield until done loading everything
         yield return new WaitUntil(() => doneLoading);
-        loadingScreen.gameObject.SetActive(false);
+        //loadingScreen.gameObject.SetActive(false);
+        
     }
     
 

@@ -13,7 +13,7 @@ namespace SantaGame {
 
         public Transform background;
         public Transform foreground;
-        PoolManager poolManager;
+         PoolManager poolManager;
 
         
         //GOtta think of better ways to form delegates after this. I shouldn't be making one for every single event.
@@ -48,40 +48,30 @@ namespace SantaGame {
         public float multiplierTime = 2.0f;
         public float timeLeftMultiplier = 0;
 
-        SantaController santa;
 
-        void Awake()
+
+
+        // Use this for initialization
+        void Start()
         {
-            //ToDo here: Find all stuff with position Tag
-            //And fill up the list of Vector 3s with those positions
-            santa = GameObject.Find("Santa").GetComponent<SantaController>();
 
-            //It might an issue where both are geting pool manager at same time and then adding it to pool
-            //And since this happens last, it no longer has
-            poolManager = GetComponent<PoolManager>();
+     
+            SantaController santa = GameObject.Find("Santa").GetComponent<SantaController>();
 
-            //In awake so that GUI can find them and add it's callbacks
             housePrefab = ((GameObject)Resources.Load("Prefabs/House")).GetComponent<House>();
             //May actually just change to static oncstants as will start to get More hectic as more pools added.
             housePrefab.ReuseID = 2;
-
+            poolManager = GameObject.Find("PoolManager").GetComponent<PoolManager>();
             //No more than 5 seeing at a time
             poolManager.AddPool(housePrefab, 30);
-        }
-
-
-    // Use this for initialization
-        void Start() {
-
             passedHouses = 0;
             numHouses = 0;
+
             santa.BirdHit += () => { timeLeftMultiplier = multiplierTime; };
-            ReachedEndOfLevel();
-          
+
         }
 
-
-        
+       
 
         public int NumberOfHouses
         {
@@ -107,6 +97,7 @@ namespace SantaGame {
             {
                 //In here will place position of house in array of positions
                 Reusable house = poolManager.Acquire(housePrefab.ReuseID);
+
                 //Maybe move event to Controller instead of What's supposed to be just data.
 
                 
@@ -120,7 +111,7 @@ namespace SantaGame {
 
                     passedHouses += 1;
 
-                    Debug.Log("hello");
+
                     //For GUI
                     this.PassedHouse(passedHouses,numHouses);
 

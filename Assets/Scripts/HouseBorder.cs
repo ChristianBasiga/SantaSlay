@@ -18,11 +18,10 @@ namespace SantaGame
 
         void OnTriggerExit2D(Collider2D other)
         {
-            Debug.Log("yoyo");
             //Then passed this house
             if (other.CompareTag("Player"))
             {
-                Debug.Log("dfgdg");
+
                 house.DidPassHouse();
             }
 

@@ -15,13 +15,9 @@ namespace SantaGame
         SantaController santa;
         
         private int level;
-        private int difficulty;
+        private float difficulty;
 
       
-        //Wait since all one image, I can't have this difference. Hmm. Fuck. I'll talk to Kris bout this.
-        //FUck this for now, it works now to get it spawning, wait spawning is not a fucking thing cause it's all drawn out
-        //Okay, no I can make this work. Instead of spawning house prefab with picture, it'll have no render and just spawn empty game Object with collider and HOuse script on it
-        //And that way I determine the spawn points by position. Okay this will still work
         Dictionary<int, float> NaughtyChances = new Dictionary<int, float>()
         {
             {1 , 10.0f },
@@ -35,6 +31,7 @@ namespace SantaGame
         public Obstacle birdPrefab;
         public Obstacle planePrefab;
 
+        LevelManager levelManager;
 
         void Awake()
         {
@@ -47,20 +44,12 @@ namespace SantaGame
                 Destroy(gameObject);
             }
 
-            santa = GameObject.FindGameObjectWithTag("Player").GetComponent<SantaController>();
+            level = 1;
             SceneManager.sceneLoaded += OnSceneLoaded;
 
-            //For transitioning from TitleScreent o actual Game Scene. Levels will not be scene transitions.
             DontDestroyOnLoad(gameObject);
-          
-        }
 
-        void Start()
-        {
-            level = 1;
-            Debug.Log(difficulty);
         }
-
 
         void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
@@ -74,7 +63,7 @@ namespace SantaGame
 
                     //In titlescreen because they can decide on difficulty before entering game
 
-                    guiManager.DifficultyChanged += (int newDiff) => { this.difficulty = newDiff; };
+                    guiManager.DifficultyChanged += (int newDiff) => { this.difficulty = (float)newDiff; Debug.Log("diff is: " +difficulty);};
                     guiManager.QuitPressed += () => {
 
                         Application.Quit();
@@ -88,7 +77,8 @@ namespace SantaGame
 
                     #region Santa Boundary and setting GameOver callback
 
-
+                    santa = GameObject.FindGameObjectWithTag("Player").GetComponent<SantaController>();
+                    boundary = GameObject.Find("Boundary").GetComponent<Transform>();
                     santa.Width = boundary.localScale.x / 2;
                     santa.Height = boundary.localScale.y / 2;
 
@@ -96,7 +86,7 @@ namespace SantaGame
                     {
                         if (newHealth <= 0)
                         {
-                            GameOver();
+                            instance.GameOver();
                         }
                     };
 
@@ -104,18 +94,19 @@ namespace SantaGame
 
                     #region Assigning LevelManager Callbacks
 
-                    LevelManager levelManager = GetComponent<LevelManager>();
+                    levelManager = GameObject.Find("LevelManager").GetComponent<LevelManager>();
 
                     //When reach end of level, need to update num houses and everything for next one.
                     levelManager.ReachedEndOfLevel += () => {
 
                         //GUi manager should be doing this, but fuck it, it's public
                         guiManager.currentLevelLabel.text = "Level: " + level.ToString();
-                        levelManager.NumberOfHouses = (int)(((difficulty / 2.0f) * (2.0f * level + 7)) + 1);
-
+                        levelManager.NumberOfHouses =  (int)(((instance.difficulty / 2) * (2.0f * instance.level + 7)) + 1);
+                        //How is it 0? When in update it's saying it's clearly 5.
                         //Incrementing for next time need to update.
-                        level += 1;
+                        instance.level += 1;
                     };
+
 
                     #endregion
 
@@ -124,20 +115,25 @@ namespace SantaGame
 
                     guiManager.PausePressed += () => {
 
-                        santa.enabled = !santa.enabled;
+                        instance.santa.enabled = !santa.enabled;
 
                     };
 
                     #endregion 
 
-                    InitAmmoPool();      
-                    
+                    InitAmmoPool();
 
                     break;
-
+                    
 
             }
+            //So that don't add it and call twice
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+
+
         }
+
+      
 
         //TO follow suit of LevelManager, I could even have SantaControler have PoolManager
         //Reference
@@ -145,7 +141,7 @@ namespace SantaGame
         {
 
 
-            PoolManager poolManager = GetComponent<PoolManager>();
+            PoolManager poolManager = GameObject.Find("PoolManager").GetComponent<PoolManager>();
 
             ammoPrefab = ((GameObject)Resources.Load(string.Format("Prefabs/Ammo/{0}", GameConstants.SantaAmmoType.COAL.ToString()))).GetComponent<SantaAmmo>();
             ammoPrefab.ReuseID = 1;
@@ -177,9 +173,19 @@ namespace SantaGame
                 ammo.gameObject.SetActive(true);
             };
 
+            //To initialize the GUI
             santa.UpdatePoints(0);
         }
 
+        //For the button, need to add the neccessarry components
+        public void Play()
+        {
+            gameObject.AddComponent(typeof(LevelManager));
+            gameObject.AddComponent(typeof(PoolManager));
+
+        }
+
+       
 
         void spawnObstacle()
         {

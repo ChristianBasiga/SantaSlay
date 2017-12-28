@@ -32,6 +32,7 @@ namespace SantaGame
         {
 
             PassedHouse();
+            BackToPool();
         }
 
        
