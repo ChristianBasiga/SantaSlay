@@ -32,12 +32,14 @@ public class GUIManager : MonoBehaviour {
     public SpriteRenderer healthSprite;
 
 
-
+    GameObject difficultyMenuPrefab;
     void Awake()
     {
         loadingScreen.gameObject.SetActive(false);
         SceneManager.sceneLoaded += OnSceneLoaded;
 
+        if (difficultyMenuPrefab == null)
+            difficultyMenuPrefab = Resources.Load("Prefabs/GUI/DifficultySelection") as GameObject;
 
     }
 
@@ -115,6 +117,16 @@ public class GUIManager : MonoBehaviour {
             QuitPressed();
         //Nothing to do here for GUI.
         //Except maybe confirmation? GameManager itself will do the ApplicationQuit after it does everthing else need to do. In this case nothing else but amybe in future, saving.
+    }
+
+    //Todo: Test for main scene, add actual pause menu to main scene too lol.
+    public void OpenSettings()
+    {
+
+        GameObject diffMenu = Instantiate(difficultyMenuPrefab) as GameObject;
+
+
+        diffMenu.transform.parent = GameObject.Find("Canvas").GetComponent<Transform>();
     }
 
     public void DifficultyAltered(int newDiff)

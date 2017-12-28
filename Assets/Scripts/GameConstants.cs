@@ -43,6 +43,8 @@ namespace SantaGame
 
             } }
 
+            //ToDo: Rest of obstacles
+
 
         };
        
