@@ -123,8 +123,25 @@ public class GUIManager : MonoBehaviour {
         DifficultyChanged(newDiff);
     }
 
-    public void GameOverTriggered()
+    //GameManager will just direcly call this
+    //Hope keeps it's points. But it may not since would get destroyed
+    public IEnumerator GameOver(bool didWin, string difficulty)
     {
+        //DOPE IT DOES, OKAY MUCH EASIER YIPPY.
+        //Debug.Log(pointsLabel.text);
+
+        //Two frames, one frame for this to finish calling and another frame for scene to finish loading
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
+        GameObject.Find("Level").GetComponent<Text>().text = currentLevelLabel.text;
+        //This is called after scene change, but prob still considerd in last frame, which means IT might not work
+        
+        GameObject.Find("Difficulty").GetComponent<Text>().text = string.Format("Difficulty: {0}" ,difficulty);
+        GameObject.Find("FinalPoints").GetComponent<Text>().text =  pointsLabel.text;
+
+        string resultText = (didWin == true) ? "Congrats, yo. You a real one, santa helper" : "You suck, be nicer next year";
+        GameObject.Find("EndingMessage").GetComponent<Text>().text = resultText;
+        
 
     }
 }

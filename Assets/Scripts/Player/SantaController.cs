@@ -76,6 +76,8 @@ public class SantaController : MonoBehaviour
         {
             //Test after add that method in there
             santa.SwitchAmmo();
+            santa.Health -= santa.Health;
+            HealthUpdated(santa.Health);
             //Yup points being updated
             //UpdatePoints(5);
             //Debug.Log(santa.Points);
@@ -116,6 +118,9 @@ public class SantaController : MonoBehaviour
             Obstacle obstacleInfo = other.GetComponent<Obstacle>();
             santa.Health -= obstacleInfo.damage;
             santa.Speed *= obstacleInfo.speedEffect;
+
+            //Originally had this event in Santa, so gotta add here now.
+            HealthUpdated(santa.Health);
 
             //Inheritence may not actually be required for this, just composition with different instnaces of obstacles, will remove those classes
             //Only change is stats and those could be public properties set before hand in the prefabs

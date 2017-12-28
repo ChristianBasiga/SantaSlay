@@ -15,6 +15,7 @@ namespace SantaGame
         SantaController santa;
         
         private int level;
+        private const int maxLevels = 5;
         private float difficulty;
 
       
@@ -183,10 +184,15 @@ namespace SantaGame
             gameObject.AddComponent(typeof(PoolManager));
 
         }
-
+        
         void GameOver()
         {
+            GUIManager guiManager = GetComponent<GUIManager>();
 
+            SceneTransitioner transitioner = GetComponent<SceneTransitioner>();
+            transitioner.GoToScene("GameOverScreen");
+            //Cause if level = to max, then did win, otherwse lost early.
+            StartCoroutine(guiManager.GameOver(instance.level == maxLevels,((int)instance.difficulty).ToString()));
 
         }
     }
