@@ -149,6 +149,14 @@ public class SantaController : MonoBehaviour
         // santaAnimations.UpdateSantaFacial(points);
 
         //Cause could pass in -3 when got wrong
+
+        if (santa.Points == 0)
+        {
+            santa.Health -= points;
+            //If out of points and drop, then start losing health
+            HealthUpdated(santa.Health);
+        }
+
         if (points == 0)
             return;
 

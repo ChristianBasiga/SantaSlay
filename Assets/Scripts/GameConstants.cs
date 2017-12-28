@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-
+using UnityEngine;
 
 namespace SantaGame
 {
@@ -27,6 +27,23 @@ namespace SantaGame
         {
             {HouseState.NAUGHTY, new Dictionary<SantaAmmoType, int>(){{SantaAmmoType.COAL , 3 }, {SantaAmmoType.PRESENT , -3} } },
             {HouseState.NICE, new Dictionary<SantaAmmoType, int>(){{SantaAmmoType.COAL, -3}, {SantaAmmoType.PRESENT, 3 } } }
+        };
+
+        public static readonly Dictionary<string, ObstacleMoveFunction> obstacleMovement = new Dictionary<string, ObstacleMoveFunction>()
+        {
+            //Okay since very special movement, inheritance might be okay after all
+            {"Snowflake", (Vector2 init, float speed) => {
+
+                Vector2 movement = init + Vector2.up * -speed;
+                float frequency = 5.0f;
+                float amplitude = 0.8f;
+                Vector2 waveAxis = Vector2.right * Mathf.Sin(Time.time * frequency ) * amplitude;
+
+                return movement + waveAxis;
+
+            } }
+
+
         };
        
     }
