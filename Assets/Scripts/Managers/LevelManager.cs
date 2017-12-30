@@ -54,7 +54,10 @@ namespace SantaGame {
         // Use this for initialization
         void Start()
         {
-
+            //How often should obstacles spawn?
+            //That's game design.
+            //To determine that, let's see how player experience plays out.
+            //Player going through level, dropping presents
      
             SantaController santa = GameObject.Find("Santa").GetComponent<SantaController>();
 
