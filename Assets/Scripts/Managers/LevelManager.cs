@@ -119,7 +119,7 @@ namespace SantaGame {
             //getting rid of speed factor(well can still use for up/down movement though) but yeah would make things
             //ALOT easier of level itself was just translating. Also then wouldn't need to have position var for star, cause could just leave it at prefabs position meaning this:
             //This is literally All I need to do, if I did that.
-            Reuseable star = poolManager.Acquire(starPrefab.ReuseID);
+            Reusable star = poolManager.Acquire(starPrefab.ReuseID);
             star.gameObject.SetActive(true);
            
         }
@@ -127,7 +127,7 @@ namespace SantaGame {
         //Exactly the same situation with this, just start off screen then come in, holy fuck okay number one priority is get that working
         void SpawnWreeths(int n)
         {
-            Reuseable wreeth = poolManager.Acquire(wreethPrefab.ReuseID);
+            Reusable wreeth = poolManager.Acquire(wreethPrefab.ReuseID);
             wreeth.gameObject.SetActive(true);
             //Difference is there may be alot of them, so could make this Ienumerator so could add delay.
         }
@@ -139,7 +139,7 @@ namespace SantaGame {
             {
                 Reusable snowflake = poolManager.Acquire(snowflakePrefab.ReuseID);
 
-                snowflake.gameObject.transform.position = snowFlakeSpawnPoints[i];
+                snowflake.gameObject.transform.position = snowFlakeSpawnPoints[i].transform.position;
                 snowflake.gameObject.SetActive(true);
             }
 

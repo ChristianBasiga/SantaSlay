@@ -44,7 +44,7 @@ namespace SantaGame {
             } },
             { "Wreeth" , (Transform init, float speed, float pattSpeed) => {
 
-                transform.position -= Vector3.right * speed;
+                init.position -= Vector3.right * speed;
                 //Not sure what to do with pattspeed yet
 
             } }
