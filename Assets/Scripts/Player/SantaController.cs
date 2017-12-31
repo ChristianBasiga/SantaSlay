@@ -26,8 +26,9 @@ public class SantaController : MonoBehaviour
 
     private Santa santa;
     private float slowDown;
+
     public Transform boundary;
-    
+    private bool readjustingBoundary = false;
     //For delay between shots
     public float reloadTime;
     public float timeTillReload;
@@ -127,14 +128,29 @@ public class SantaController : MonoBehaviour
 
         newPos.y = Mathf.Clamp(newPos.y, minY, maxY);
         newPos.x = Mathf.Clamp(newPos.x, minX, maxX);
-        if (newPos.x > maxX - transform.localScale.x)
+
+        if (newPos.x > maxX - transform.localScale.x && !readjustingBoundary)
         {
-            //Then almost at edge of boundary and need to move boundary, prob move to i enumerator that goes until
-            boundary.Translate(Vector3.right * Time.deltaTime * santa.Speed * 2);
+            StartCoroutine(ReadjustBoundary());
         }
 
         transform.position = newPos;
     }
+
+    IEnumerator ReadjustBoundary()
+    {
+        readjustingBoundary = true;
+        //Then almost at edge of boundary and need to move boundary, prob move to i enumerator that goes until
+        //While wat?? while santas position not near start of boundary? or middle, we'll see depends on how smooth looks
+        while (transform.position.x >= boundary.position.x + boundary.localScale.x / 2)
+        {
+            boundary.Translate(Vector3.right * Time.deltaTime * santa.Speed * 0.5f);
+            yield return new WaitForEndOfFrame();
+        }
+
+        readjustingBoundary = false;
+    }
+
 
     void Shoot()
     {

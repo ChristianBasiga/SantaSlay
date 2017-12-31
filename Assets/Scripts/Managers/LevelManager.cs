@@ -44,6 +44,7 @@ namespace SantaGame {
 
         //I want to reuse the one in reusable sincree same signature
         int numHouses;
+        //For GUI and for snowflake spawning
         int passedHouses;
 
         House housePrefab;
@@ -189,20 +190,38 @@ namespace SantaGame {
             //Difference is there may be alot of them, so could make this Ienumerator so could add delay.
         }
 
-        void SpawnSnowFlakes()
+        IEnumerator SpawnSnowFlakes()
         {
             float y = boundary.position.y + boundary.localScale.y / 2;
 
-            //Will determine how many snowflakes to spawn later, or just call this later cause haven't decided that yet,
-            //and unlike wreaths not placing these anywhere specific
-            Reusable snowflake = poolManager.Acquire(snowflakePrefab.ReuseID);
+            //Could just spawn random up to max of some equation I'll come up with later
+            //And then just let them fall slow, that way some flakes may start at top, but some may also already be in middle or something
+            //by time Santa in. I would prefer to make it everytime enters new view, but I made it smoother transition to rest of level so can't do it like that
+            //Well I still can, so anytime santa reaches boundary and they shift forward then, time to randomly spawn snowflakes again
+            //Still need to swap it with Ienumerator that moves certain amount.
 
-            float minX = (boundary.position.x - boundary.localScale.x / 2) + snowflake.gameObject.transform.localScale.x;
-            float maxX = (boundary.position.x + boundary.localScale.x / 2) - snowflake.gameObject.transform.localScale.x;
+            //Edit: Finished this. Here what I could do. Make this a Coroutine and wait for random amount of seconds and spawn small interval of snowflakes
+            //every iteration of loop and condition for loop will be while housesPassed < numHouses. Cause then no more reason for SnowFlakes
+            //Yeah that should work.
 
-            snowflake.gameObject.transform.position = new Vector3(Random.Range(minX, maxX), y - snowflake.gameObject.transform.localScale.y,0);
-            snowflake.gameObject.SetActive(true);
+            while (passedHouses < numHouses)
+            {
 
+                Reusable snowflake = poolManager.Acquire(snowflakePrefab.ReuseID);
+
+                float minX = (boundary.position.x - boundary.localScale.x / 2) + snowflake.gameObject.transform.localScale.x;
+                float maxX = (boundary.position.x + boundary.localScale.x / 2) - snowflake.gameObject.transform.localScale.x;
+
+                snowflake.gameObject.transform.position = new Vector3(Random.Range(minX, maxX), y - snowflake.gameObject.transform.localScale.y, 0);
+                snowflake.gameObject.SetActive(true);
+
+                //wait till pass a house? fuck hmmm. or really just time lol, I won't have the random amount cause if 1 second apart
+                //then they will spread fine and chance that they'll spawn in same position, so multiple within same frame
+                //wasn't best idea in hindsight so this is better choice
+                float waitTime = Random.Range(1.0f, 5.0f);
+
+                yield return WaitForSeconds(waitTime);
+            }
         }
 
         #region House related Methods
@@ -267,12 +286,6 @@ namespace SantaGame {
 
         void Update()
         {
-            //Here it will be constantly checking housesPassed to see of equal to numHouses
-            if (passedHouses == numHouses)
-            {
-                if (ReachedEndOfLevel != null)
-                    ReachedEndOfLevel();
-            }
             if (background == null)
             {
                 Debug.Log("nuttin");
@@ -280,12 +293,12 @@ namespace SantaGame {
             //Tbh, could just reach end of level when do this, but didn't want to remove it otherwise passedHoues only for GUI
             if (background != null && boundary.position.x - boundary.localScale.x / 2 >= background.position.x + boundary.localScale.x / 2)
             {
-                passedHouses += 1;
-                ReachedEndOfLevel();
-
-                Debug.Log("Reached end");
-                //GameManager will set the background in a callback attached to ReachedEndOfLevel event
-                background = null;
+                if (ReachedEndOfLevel != null)
+                {
+                    ReachedEndOfLevel();
+                    //GameManager will set the background in a callback attached to ReachedEndOfLevel event
+                    background = null;
+                }
             }
 
             if (timeLeftMultiplier > 0)
