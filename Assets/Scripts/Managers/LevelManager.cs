@@ -13,7 +13,7 @@ namespace SantaGame {
 
 
         public Transform boundary;
-        public Transform background;
+        private Transform background;
         PoolManager poolManager;
 
         
@@ -66,6 +66,14 @@ namespace SantaGame {
         public float timeLeftMultiplier = 0;
 
 
+        public Transform Background
+        {
+            set
+            {
+                background = value;
+                LoadedLevel();
+            }
+        }
 
 
         // Use this for initialization
@@ -90,8 +98,7 @@ namespace SantaGame {
             //Not that need seperate pools for them
 
 
-            //Cause all share same pool.
-            snowflakePrefab = ((GameObject)Resources.Load("Prefabs/Snowflake")).GetComponent<Obstacle>();
+            /* = ((GameObject)Resources.Load("Prefabs/Snowflake")).GetComponent<Obstacle>();
             snowflakePrefab.ReuseID = 3;
             starPrefab = ((GameObject)Resources.Load("Prefabs/Star")).GetComponent<Obstacle>();
             starPrefab.ReuseID = 4;
@@ -106,9 +113,9 @@ namespace SantaGame {
             poolManager.AddPool(starPrefab, 2);
 
             poolManager.AddPool(wreethPrefab, 5);
-
+            */
             santa.BirdHit += () => { timeLeftMultiplier = multiplierTime; };
-
+            ReachedEndOfLevel();
         }
 
 
@@ -225,11 +232,16 @@ namespace SantaGame {
                 if (ReachedEndOfLevel != null)
                     ReachedEndOfLevel();
             }
-
+            if (background == null)
+            {
+                Debug.Log("nuttin");
+            }
             //Tbh, could just reach end of level when do this, but didn't want to remove it otherwise passedHoues only for GUI
             if (background != null && boundary.position.x - boundary.localScale.x / 2 >= background.position.x + boundary.localScale.x / 2)
             {
                 passedHouses += 1;
+                ReachedEndOfLevel();
+
                 Debug.Log("Reached end");
                 //GameManager will set the background in a callback attached to ReachedEndOfLevel event
                 background = null;

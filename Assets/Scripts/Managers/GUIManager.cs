@@ -77,6 +77,7 @@ public class GUIManager : MonoBehaviour {
             {
                
                 doneLoading = false;
+                StartCoroutine(loadLoadingScreen());
             };
 
             lm.LoadedLevel += () =>
@@ -95,9 +96,10 @@ public class GUIManager : MonoBehaviour {
     {
         //loadingScreen.gameObject.SetActive(true);
         //Here need to yield until done loading everything
+        Debug.Log("still loading");
         yield return new WaitUntil(() => doneLoading);
         //loadingScreen.gameObject.SetActive(false);
-        
+        Debug.Log("done loading");
     }
     
 
