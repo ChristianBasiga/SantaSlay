@@ -98,7 +98,7 @@ namespace SantaGame {
             //Not that need seperate pools for them
 
 
-            /* = ((GameObject)Resources.Load("Prefabs/Snowflake")).GetComponent<Obstacle>();
+            snowflakePrefab = ((GameObject)Resources.Load("Prefabs/Snowflake")).GetComponent<Obstacle>();
             snowflakePrefab.ReuseID = 3;
             starPrefab = ((GameObject)Resources.Load("Prefabs/Star")).GetComponent<Obstacle>();
             starPrefab.ReuseID = 4;
@@ -113,8 +113,8 @@ namespace SantaGame {
             poolManager.AddPool(starPrefab, 2);
 
             poolManager.AddPool(wreethPrefab, 5);
-            */
-            santa.BirdHit += () => { timeLeftMultiplier = multiplierTime; };
+            
+            santa.GotStar += () => { timeLeftMultiplier = multiplierTime; };
             ReachedEndOfLevel();
         }
 

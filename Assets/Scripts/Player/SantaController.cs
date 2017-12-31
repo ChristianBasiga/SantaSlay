@@ -9,7 +9,7 @@ public class SantaController : MonoBehaviour
 
     //This one may not be worth putting as event when really just setting a property, no other callbacks will be assigned to it other than that
     //nothing else special happens when HitBird, but incase we do I'll leave as is just to get done
-    public event SantaHit BirdHit;
+    public event SantaHit GotStar;
 
     public delegate void AmmoDelegate(GameConstants.SantaAmmoType ammoType);
     public event AmmoDelegate SantaShot;
@@ -158,20 +158,11 @@ public class SantaController : MonoBehaviour
             //Originally had this event in Santa, so gotta add here now.
             HealthUpdated(santa.Health);
 
-            //Inheritence may not actually be required for this, just composition with different instnaces of obstacles, will remove those classes
-            //Only change is stats and those could be public properties set before hand in the prefabs
-            if (other.gameObject.name.Contains("Bird")) {
-
-                //This one may be worth just setting a public function on GameManager
-                //But for now just calls the callback that activates multiplier
-                BirdHit();
-            }
-
+           
         }
-        else if (other.CompareTag("Boundary"))
+        else if (other.CompareTag("Star"))
         {
-
-           // transform.Translate(-lastTranslation);
+            GotStar();
         }
 
     }

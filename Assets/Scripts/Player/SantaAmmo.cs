@@ -41,6 +41,12 @@ namespace SantaGame
                 BackToPool();
 
             }
+            else if (other.CompareTag("Wreath"))
+            {
+                //Because those block the ammo
+                BackToPool();
+            }
+
         }
     }
 }
