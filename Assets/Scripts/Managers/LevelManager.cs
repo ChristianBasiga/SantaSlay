@@ -227,11 +227,12 @@ namespace SantaGame {
             }
 
             //Tbh, could just reach end of level when do this, but didn't want to remove it otherwise passedHoues only for GUI
-            if (boundary.position.x - boundary.localScale.x / 2 >= background.position.x + boundary.localScale.x / 2)
+            if (background != null && boundary.position.x - boundary.localScale.x / 2 >= background.position.x + boundary.localScale.x / 2)
             {
                 passedHouses += 1;
-                //Works
                 Debug.Log("Reached end");
+                //GameManager will set the background in a callback attached to ReachedEndOfLevel event
+                background = null;
             }
 
             if (timeLeftMultiplier > 0)

@@ -98,10 +98,17 @@ namespace SantaGame
                         //GUi manager should be doing this, but fuck it, it's public
                         guiManager.currentLevelLabel.text = "Level: " + instance.level.ToString();
                         levelManager.NumberOfHouses =  (int)(((instance.difficulty / 2) * (2.0f * instance.level + 7)) + 1);
-
+                        levelManager.background = GameObject.Find(string.Format("Background({0})", instance.level.ToString())).GetComponent<Transform>();
                         instance.level += 1;
+
+                        //Cause only 7 total levels
+                        if (instance.level > maxLevels)
+                        {
+                            GameOver();
+                        }
                     };
 
+                   
 
                     #endregion
 
