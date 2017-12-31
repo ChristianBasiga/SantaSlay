@@ -41,13 +41,20 @@ public class SantaController : MonoBehaviour
 
     void Update()
     {
-        
+        //For whether or not to slow santa down
+        float moveHorizontal = Input.GetAxis("Horizontal");
+
+        float slowDown = 1;
+        if (moveHorizontal < 0)
+        {
+            slowDown = 0.5f;
+        }
 
         //vertical 
         float moveVertical = Input.GetAxis("Vertical");
 
         //vector direction
-        Vector3 movement = new Vector3(1, moveVertical,0);
+        Vector3 movement = new Vector3(1 * slowDown, moveVertical,0);
 
         Vector3 newPos = transform.position + (movement * santa.Speed * Time.deltaTime);
 
@@ -62,6 +69,7 @@ public class SantaController : MonoBehaviour
         float maxY = boundary.position.y + boundary.localScale.y / 2;
         maxY -= transform.localScale.y / 2;
 
+        //Min x is not really neccessarry tbh, but just incase change movement, will keep for now
         float minX = boundary.position.x - boundary.localScale.x / 2;
         minX += transform.localScale.x / 2;
 
@@ -72,7 +80,6 @@ public class SantaController : MonoBehaviour
         newPos.x = Mathf.Clamp(newPos.x, minX, maxX );
         if (newPos.x > maxX - transform.localScale.x)
         {
-            //
             //Then almost at edge of boundary and need to move boundary, prob move to i enumerator that goes until
             boundary.Translate(Vector3.right * Time.deltaTime * santa.Speed * 2);
         }

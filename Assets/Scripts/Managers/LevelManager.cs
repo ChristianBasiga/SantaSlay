@@ -14,7 +14,6 @@ namespace SantaGame {
 
         public Transform boundary;
         public Transform background;
-        public Transform foreground;
         PoolManager poolManager;
 
         
@@ -164,7 +163,8 @@ namespace SantaGame {
         {
             set
             {
-                numHouses = value;
+                //Plus 1 cause will increment oncce hit boundary
+                numHouses = value + 1;
                 passedHouses = 0;
 
                 //For GUI
@@ -224,6 +224,14 @@ namespace SantaGame {
             {
                 if (ReachedEndOfLevel != null)
                     ReachedEndOfLevel();
+            }
+
+            //Tbh, could just reach end of level when do this, but didn't want to remove it otherwise passedHoues only for GUI
+            if (boundary.position.x - boundary.localScale.x / 2 >= background.position.x + boundary.localScale.x / 2)
+            {
+                passedHouses += 1;
+                //Works
+                Debug.Log("Reached end");
             }
 
             if (timeLeftMultiplier > 0)
