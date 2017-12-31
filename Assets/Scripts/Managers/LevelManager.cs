@@ -11,6 +11,8 @@ namespace SantaGame {
     public class LevelManager : MonoBehaviour {
 
 
+
+        public Transform boundary;
         public Transform background;
         public Transform foreground;
         PoolManager poolManager;
@@ -30,6 +32,7 @@ namespace SantaGame {
 
 
         #endregion
+
 
         #region House Related Varaibles
         //Same name event in House, but different purpose and signature, prob confusing but fuck for now.
@@ -112,7 +115,7 @@ namespace SantaGame {
 
        
         void SpawnStar()
-        {
+       {
             //ToDo: spawn store, and place in correct position
             //To make "correct position" easier I could do initial plan of just having moving backgrounds
             //instead of actually moving santa outside of up and down. and that would mean
@@ -120,6 +123,14 @@ namespace SantaGame {
             //ALOT easier of level itself was just translating. Also then wouldn't need to have position var for star, cause could just leave it at prefabs position meaning this:
             //This is literally All I need to do, if I did that.
             Reusable star = poolManager.Acquire(starPrefab.ReuseID);
+            Vector3 starSpawnPoint = new Vector3();
+
+            starSpawnPoint.y = boundary.position.y + boundary.localScale.y / 2;
+
+            starSpawnPoint.x = boundary.position.x + boundary.localScale.x / 2;
+
+            star.transform.position = starSpawnPoint;
+
             star.gameObject.SetActive(true);
            
         }
@@ -127,6 +138,9 @@ namespace SantaGame {
         //Exactly the same situation with this, just start off screen then come in, holy fuck okay number one priority is get that working
         void SpawnWreeths(int n)
         {
+            //This one might actually be array of spawn points, reason is because they could come out of naughty houses to block coal or stop other people
+            //from getting presents, so will dealw ith these spawns later. later being fucking today cause holy shit this should already be done, just been
+            //lazy.
             Reusable wreeth = poolManager.Acquire(wreethPrefab.ReuseID);
             wreeth.gameObject.SetActive(true);
             //Difference is there may be alot of them, so could make this Ienumerator so could add delay.

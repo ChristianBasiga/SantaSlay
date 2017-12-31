@@ -25,23 +25,8 @@ public class SantaController : MonoBehaviour
    // public event Notifier PointsWillUpdate;
 
     private Santa santa;
-
-    //Will be set by level or game manager
-    float width;
-    float height;
-
-    public float Width
-    {
-
-        set { width = value; }
-    }
-
-    public float Height
-    {
-        set { height = value; }
-
-    }
-
+    public Transform boundary;
+    
     //For delay between shots
     public float reloadTime;
     public float timeTillReload;
@@ -56,19 +41,41 @@ public class SantaController : MonoBehaviour
 
     void Update()
     {
-        float moveHorizontal = Input.GetAxis("Horizontal");
+        
 
         //vertical 
         float moveVertical = Input.GetAxis("Vertical");
 
         //vector direction
-        Vector3 movement = new Vector3(moveHorizontal, moveVertical,0);
+        Vector3 movement = new Vector3(1, moveVertical,0);
 
-        Vector3 newPos = transform.position + (movement * santa.Speed * 0.1f);
+        Vector3 newPos = transform.position + (movement * santa.Speed * Time.deltaTime);
 
-        //Stay within same position, unity has up for down so don't ned to be engative
-        newPos.y = Mathf.Clamp(newPos.y, -height + (transform.localScale.y), height - (transform.localScale.y));
-        newPos.x = Mathf.Clamp(newPos.x, -width + (transform.localScale.x), width - (transform.localScale.x));
+
+        //Okay 0 point of objects in unity is in center NOT topleft.
+        //Wait the .y is already halfway point cause it's radius not diameter I believe, we'll find out
+        //Okay it IS diameter so do want only half of it.
+
+        float minY = boundary.position.y - boundary.localScale.y / 2;
+        minY += transform.localScale.y / 2;
+
+        float maxY = boundary.position.y + boundary.localScale.y / 2;
+        maxY -= transform.localScale.y / 2;
+
+        float minX = boundary.position.x - boundary.localScale.x / 2;
+        minX += transform.localScale.x / 2;
+
+        float maxX = boundary.position.x + boundary.localScale.x / 2;
+        maxX -= transform.localScale.x / 2;
+
+        newPos.y = Mathf.Clamp(newPos.y, minY, maxY);
+        newPos.x = Mathf.Clamp(newPos.x, minX, maxX );
+        if (newPos.x > maxX - transform.localScale.x)
+        {
+            //
+            //Then almost at edge of boundary and need to move boundary, prob move to i enumerator that goes until
+            boundary.Translate(Vector3.right * Time.deltaTime * santa.Speed * 2);
+        }
 
         transform.position = newPos;
         //Just k for testing, will be something else later
@@ -78,9 +85,7 @@ public class SantaController : MonoBehaviour
             santa.SwitchAmmo();
             santa.Health -= santa.Health;
             HealthUpdated(santa.Health);
-            //Yup points being updated
-            //UpdatePoints(5);
-            //Debug.Log(santa.Points);
+        
         }
         //Else cause can't shoot and swap ammo at same time
         else if (Input.GetKeyDown(KeyCode.Z))

@@ -27,10 +27,6 @@ namespace SantaGame
         };
 
         public SantaAmmo ammoPrefab;
-        public Transform boundary;
-
-        public Obstacle birdPrefab;
-        public Obstacle planePrefab;
 
         LevelManager levelManager;
 
@@ -79,9 +75,8 @@ namespace SantaGame
                     #region Santa Boundary and setting GameOver callback
 
                     santa = GameObject.FindGameObjectWithTag("Player").GetComponent<SantaController>();
-                    boundary = GameObject.Find("Boundary").GetComponent<Transform>();
-                    santa.Width = boundary.localScale.x / 2;
-                    santa.Height = boundary.localScale.y / 2;
+
+                    
 
                     santa.HealthUpdated += (int newHealth) =>
                     {
