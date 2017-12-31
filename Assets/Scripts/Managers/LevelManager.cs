@@ -23,10 +23,15 @@ namespace SantaGame {
 
         #region Obstacle Variables
 
-        GameObject[] snowFlakeSpawnPoints;
+        //Will just be along edge of top boundary, a spot within that. That's a simple equation, no need for this.
+        //GameObject[] snowFlakeSpawnPoints;
         Obstacle snowflakePrefab;
 
         Obstacle starPrefab;
+        
+        //his is needed cause will be among houses, or will it? I could just retrieve all houses currently spawned then get ref to child
+        //for spawning tbh.
+        //GameObject[] wreethSpawnPoints;
         Obstacle wreethPrefab;
 
 
@@ -147,21 +152,56 @@ namespace SantaGame {
             //This one might actually be array of spawn points, reason is because they could come out of naughty houses to block coal or stop other people
             //from getting presents, so will dealw ith these spawns later. later being fucking today cause holy shit this should already be done, just been
             //lazy.
-            Reusable wreeth = poolManager.Acquire(wreethPrefab.ReuseID);
-            wreeth.gameObject.SetActive(true);
+
+            //Scatter wreeths across all spawned houses that are naughty
+            //Then they will be set active when enter house boundary of it
+            GameObject[] spawnedHouses = GameObject.FindGameObjectsWithTag("House");
+            int wreethsSpawned = 0;
+            for (int i = 0; i < spawnedHouses.Length && wreethsSpawned < n; ++i)
+            {
+
+                House house = spawnedHouses[i].GetComponent<House>();
+
+                if (house.houseState == GameConstants.HouseState.NAUGHTY)
+                {
+                    //Could make it just 50% chance naughty house has it or not, tbh, just to avoid complexity for now.
+                    //Cause also determining naughty later. So it would add layer of complexity of determine how many wreaths out of how many naughty
+                    //too. TODO: determine equation for determining chance
+
+                    int rn = Random.Range(1, 101);
+
+                    if (rn >= 50) continue;
+                    
+
+                    house.EnteredHouseBorder += () =>
+                    {
+
+                        Reusable wreeth = poolManager.Acquire(wreethPrefab.ReuseID);
+
+                    //Getting wreeth spawn point and making wreeth be at that position
+                        wreeth.gameObject.transform.position = house.gameObject.transform.GetChild(1).position;
+                        wreeth.gameObject.SetActive(true);
+                    };
+                }
+            }
+
+          
             //Difference is there may be alot of them, so could make this Ienumerator so could add delay.
         }
 
-        void SpawnSnowFlakes(int n)
+        void SpawnSnowFlakes()
         {
-            //Need spawn points for snowflakes
-            for (int i = 0; i < snowFlakeSpawnPoints.Length; ++i)
-            {
-                Reusable snowflake = poolManager.Acquire(snowflakePrefab.ReuseID);
+            float y = boundary.position.y + boundary.localScale.y / 2;
 
-                snowflake.gameObject.transform.position = snowFlakeSpawnPoints[i].transform.position;
-                snowflake.gameObject.SetActive(true);
-            }
+            //Will determine how many snowflakes to spawn later, or just call this later cause haven't decided that yet,
+            //and unlike wreaths not placing these anywhere specific
+            Reusable snowflake = poolManager.Acquire(snowflakePrefab.ReuseID);
+
+            float minX = (boundary.position.x - boundary.localScale.x / 2) + snowflake.gameObject.transform.localScale.x;
+            float maxX = (boundary.position.x + boundary.localScale.x / 2) - snowflake.gameObject.transform.localScale.x;
+
+            snowflake.gameObject.transform.position = new Vector3(Random.Range(minX, maxX), y - snowflake.gameObject.transform.localScale.y,0);
+            snowflake.gameObject.SetActive(true);
 
         }
 
@@ -176,8 +216,9 @@ namespace SantaGame {
 
                 //For GUI
                 PassedHouse(passedHouses,numHouses);
-
+                
                 spawnHouses();
+                SpawnWreeths(1);
 
                 LoadedLevel();
             }

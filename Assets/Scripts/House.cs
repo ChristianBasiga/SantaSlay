@@ -15,6 +15,7 @@ namespace SantaGame
         //Makes sense to be LevelChanged delegate since passing house means level updated in way? Fuck it
         //reusing cause same signature lol.
         public event LevelChanged PassedHouse;
+        public event LevelChanged EnteredHouseBorder;
         public GameConstants.HouseState houseState;
 
 
@@ -35,6 +36,10 @@ namespace SantaGame
             BackToPool();
         }
 
+        public void DidEnterHouse()
+        {
+            DidEnterHouse();
+        }
        
     }
 }
