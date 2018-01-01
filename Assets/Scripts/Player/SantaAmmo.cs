@@ -11,10 +11,6 @@ namespace SantaGame
         //Just speed really rn, if want coal that lasts longer will do later
         float speed;
         public event Notifier HitHouse;
-
-
-        Rigidbody2D rb;
-
        
        
         void Start()
@@ -35,6 +31,7 @@ namespace SantaGame
 
                 House house = other.GetComponent<House>();
                 if (HitHouse != null)
+
                     HitHouse(GameConstants.pointWorth[house.houseState][type]);
 
 

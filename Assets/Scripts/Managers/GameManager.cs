@@ -28,6 +28,11 @@ namespace SantaGame
 
         public SantaAmmo ammoPrefab;
 
+        //Multiplier Variables
+        //All public for testing purposes
+        public float multiplierTime = 2.0f;
+        public float timeLeftMultiplier = 0;
+
         LevelManager levelManager;
 
         void Awake()
@@ -76,7 +81,8 @@ namespace SantaGame
 
                     santa = GameObject.FindGameObjectWithTag("Player").GetComponent<SantaController>();
 
-                    
+
+                    santa.GotStar += () => { StartCoroutine(TickDownMultiplier); };
 
                     santa.HealthUpdated += (int newHealth) =>
                     {
@@ -169,7 +175,7 @@ namespace SantaGame
                         break;
                 }
 
-                ammoInfo.HitHouse += santa.UpdatePoints;
+                ammoInfo.HitHouse += CheckMultiplier;
 
                 ammo.gameObject.transform.position = santa.transform.position;
                 ammo.gameObject.SetActive(true);
@@ -177,6 +183,34 @@ namespace SantaGame
 
             //To initialize the GUI
             santa.UpdatePoints(0);
+        }
+
+
+        //Here instead of update so only checks in the frames where they hit star or multiplier on
+        IEnumerator TickDownMultiplier()
+        {
+            if (timeLeftMultiplier <= 0)
+            {
+                timeLeftMultiplier = multiplierTime;
+
+                while (timeLeftMultiplier > 0)
+                {
+                    timeLeftMultiplier -= Time.deltaTime;
+                    yield return new WaitForEndOfFrame();
+                }
+
+            }
+        }
+
+        //Forward function to see if need to multiply points before  updating santa points
+        void CheckMultiplier(int points)
+        {
+            if (timeLeftMultiplier > 0)
+            {
+                points *= 2;
+            }
+
+            santa.UpdatePoints(points);
         }
 
         //For the button, need to add the neccessarry components

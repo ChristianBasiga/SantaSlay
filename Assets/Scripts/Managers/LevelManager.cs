@@ -23,17 +23,11 @@ namespace SantaGame {
 
         #region Obstacle Variables
 
-        //Will just be along edge of top boundary, a spot within that. That's a simple equation, no need for this.
-        //GameObject[] snowFlakeSpawnPoints;
         Obstacle snowflakePrefab;
 
         Obstacle starPrefab;
         
-        //his is needed cause will be among houses, or will it? I could just retrieve all houses currently spawned then get ref to child
-        //for spawning tbh.
-        //GameObject[] wreethSpawnPoints;
         Obstacle wreethPrefab;
-
 
         #endregion
 
@@ -66,10 +60,7 @@ namespace SantaGame {
         //At maximum would be 50%
         float naughtyChance;
 
-        //Multiplier Variables
-        //All public for testing purposes
-        public float multiplierTime = 2.0f;
-        public float timeLeftMultiplier = 0;
+      
 
 
         public Transform Background
@@ -120,20 +111,18 @@ namespace SantaGame {
 
             poolManager.AddPool(wreethPrefab, 5);
             
-            santa.GotStar += () => { timeLeftMultiplier = multiplierTime; };
+            //Right, but without the forwardingm there is no actual multipier happenings like was before. Moving this back to 
+            //GameManager
+
             ReachedEndOfLevel();
         }
 
 
        
+        //TBh could just make this a random low chance, lol fuck it right? Devoted enough time to this
         void SpawnStar()
-       {
-            //ToDo: spawn store, and place in correct position
-            //To make "correct position" easier I could do initial plan of just having moving backgrounds
-            //instead of actually moving santa outside of up and down. and that would mean
-            //getting rid of speed factor(well can still use for up/down movement though) but yeah would make things
-            //ALOT easier of level itself was just translating. Also then wouldn't need to have position var for star, cause could just leave it at prefabs position meaning this:
-            //This is literally All I need to do, if I did that.
+        { 
+            
             Reusable star = poolManager.Acquire(starPrefab.ReuseID);
             Vector3 starSpawnPoint = new Vector3();
 
@@ -220,7 +209,7 @@ namespace SantaGame {
                 //wasn't best idea in hindsight so this is better choice
                 float waitTime = Random.Range(1.0f, 5.0f);
 
-                yield return WaitForSeconds(waitTime);
+                yield return new WaitForSeconds(waitTime);
             }
         }
 
@@ -251,9 +240,6 @@ namespace SantaGame {
             {
                 //In here will place position of house in array of positions
                 Reusable house = poolManager.Acquire(housePrefab.ReuseID);
-
-                //Maybe move event to Controller instead of What's supposed to be just data.
-
                 
                 //Need to create the house spawn points first.
                // house.gameObject.transform.position = houseSpawnPoints[i];
@@ -286,25 +272,19 @@ namespace SantaGame {
 
         void Update()
         {
-            if (background == null)
-            {
-                Debug.Log("nuttin");
-            }
+           
             //Tbh, could just reach end of level when do this, but didn't want to remove it otherwise passedHoues only for GUI
             if (background != null && boundary.position.x - boundary.localScale.x / 2 >= background.position.x + boundary.localScale.x / 2)
             {
                 if (ReachedEndOfLevel != null)
                 {
                     ReachedEndOfLevel();
+
                     //GameManager will set the background in a callback attached to ReachedEndOfLevel event
                     background = null;
                 }
             }
 
-            if (timeLeftMultiplier > 0)
-            {
-                timeLeftMultiplier -= Time.deltaTime;
-            }
         }
 
     }
