@@ -13,7 +13,7 @@ namespace SantaGame
 
             get
             {
-                return 1.0f;
+                return speed;
             }
             set
             {
@@ -25,7 +25,7 @@ namespace SantaGame
         {
             get
             {
-                return 1.0f;
+                return pattSpeed;
             }
             set
             {

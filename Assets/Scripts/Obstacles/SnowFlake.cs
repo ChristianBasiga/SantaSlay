@@ -7,9 +7,7 @@ namespace SantaGame {
     public class SnowFlake : Obstacle
     {
 
-        private float speed;
-        private float pattSpeed;
-
+      
         public float amplitude;
 
         //Snowflake only one that actually effects santa directly(May change wreeth to do same again later)
@@ -54,15 +52,6 @@ namespace SantaGame {
             Vector3 waveAxis = Vector3.right * Mathf.Sin(Time.time * patternSpeed) * amplitude;
 
             transform.position = movement + waveAxis;
-
-        }
-
-        void OnTriggerEnter2D(Collider2D other)
-        {
-            if (other.CompareTag("Player"))
-            {
-                BackToPool();
-            }
 
         }
     }

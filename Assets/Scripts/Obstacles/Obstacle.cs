@@ -21,7 +21,10 @@ namespace SantaGame {
 
         
         //This would be something all derived classes will have.
-        void OnTriggerEnter2D(Collider2D other)
+        //May not need to be virtual cause don't think going to do more on the obstacles
+        //cause santa controller handling when hit player, though I could add that lol
+        //but for now leave as is just to finish, note what I learned, and move on.
+        protected virtual void OnTriggerEnter2D(Collider2D other)
         {
             if (other.CompareTag("Player"))
                 BackToPool();
@@ -29,7 +32,7 @@ namespace SantaGame {
 
 
         //If out of view of camera, then just disappear
-        void OnTriggerExit2D(Collider2D other)
+        protected virtual void OnTriggerExit2D(Collider2D other)
         {
             if (other.CompareTag("Boundary"))
             {
