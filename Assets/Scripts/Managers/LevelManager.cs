@@ -23,11 +23,11 @@ namespace SantaGame {
 
         #region Obstacle Variables
 
-        Obstacle snowflakePrefab;
+        SnowFlake snowflakePrefab;
 
-        Obstacle starPrefab;
+        Star starPrefab;
         
-        Obstacle wreethPrefab;
+        ChristmasWreath wreethPrefab;
 
         #endregion
 
@@ -90,29 +90,21 @@ namespace SantaGame {
             numHouses = 0;
 
 
-            //Wait, wait. I only need obstacles pool cause that's these all are. Specific instnaces means they can act as prototypes.
-            //Simplicity sake, I'ma just have them ahve different pools, fuck it. Otherwise would need to copy everything, sprite, transform, etc. over
-            //Not that need seperate pools for them
-
-
-            snowflakePrefab = ((GameObject)Resources.Load("Prefabs/Snowflake")).GetComponent<Obstacle>();
+           
+            snowflakePrefab = ((GameObject)Resources.Load("Prefabs/Snowflake")).GetComponent<SnowFlake>();
             snowflakePrefab.ReuseID = 3;
-            starPrefab = ((GameObject)Resources.Load("Prefabs/Star")).GetComponent<Obstacle>();
+            starPrefab = ((GameObject)Resources.Load("Prefabs/Star")).GetComponent<Star>();
             starPrefab.ReuseID = 4;
-            wreethPrefab = ((GameObject)Resources.Load("Prefabs/Wreeth")).GetComponent<Obstacle>();
+            wreethPrefab = ((GameObject)Resources.Load("Prefabs/Wreeth")).GetComponent<ChristmasWreath>();
             wreethPrefab.ReuseID = 5;
 
             
             
             poolManager.AddPool(snowflakePrefab, 5);
-            //Very rare for there to be more than 1 star, tbh this is waste of pool for this, might as well just instantiate it
-            //cause it's not as bad as houses, and snowflakes etc. But will leave as is for now, just incase
-            poolManager.AddPool(starPrefab, 2);
+
+            poolManager.AddPool(starPrefab, 5);
 
             poolManager.AddPool(wreethPrefab, 5);
-            
-            //Right, but without the forwardingm there is no actual multipier happenings like was before. Moving this back to 
-            //GameManager
 
             ReachedEndOfLevel();
         }

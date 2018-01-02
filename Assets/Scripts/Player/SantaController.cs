@@ -167,9 +167,9 @@ public class SantaController : MonoBehaviour
         if (other.CompareTag("Snowflake"))
         {
 
-            Obstacle obstacleInfo = other.GetComponent<Obstacle>();
-            santa.Health -= obstacleInfo.damage;
-            santa.Speed *= obstacleInfo.speedEffect;
+            SnowFlake snowflake = other.GetComponent<SnowFlake>();
+            santa.Health -= snowflake.damage;
+            santa.Speed *= snowflake.speedEffect;
 
             //Originally had this event in Santa, so gotta add here now.
             HealthUpdated(santa.Health);

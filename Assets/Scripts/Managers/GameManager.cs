@@ -82,7 +82,7 @@ namespace SantaGame
                     santa = GameObject.FindGameObjectWithTag("Player").GetComponent<SantaController>();
 
 
-                    santa.GotStar += () => { StartCoroutine(TickDownMultiplier); };
+                    santa.GotStar += () => { StartCoroutine(TickDownMultiplier()); };
 
                     santa.HealthUpdated += (int newHealth) =>
                     {

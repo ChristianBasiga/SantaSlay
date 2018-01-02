@@ -11,8 +11,9 @@ namespace SantaGame {
         public float amplitude;
 
         //Snowflake only one that actually effects santa directly(May change wreeth to do same again later)
-        private int damage;
-        private float slowEffect;
+        //May make this an event, but for now fuck it lol.
+        public int damage;
+        public float speedEffect;
 
         public float movSpeed
         {
@@ -47,6 +48,7 @@ namespace SantaGame {
         // Update is called once per frame
         void Update() {
 
+            //Todo: Wreath prob sinwave instead, and this an arc motion
             Vector3 movement = transform.position + Vector3.up * -movSpeed;
 
             Vector3 waveAxis = Vector3.right * Mathf.Sin(Time.time * patternSpeed) * amplitude;
