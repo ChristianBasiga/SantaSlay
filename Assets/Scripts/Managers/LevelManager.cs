@@ -14,6 +14,7 @@ namespace SantaGame {
 
         public Transform boundary;
         private Transform background;
+        public GameObject[] houses;
         PoolManager poolManager;
 
         
@@ -72,33 +73,45 @@ namespace SantaGame {
             }
         }
 
+        void Awake()
+        {
+            houses = GameObjects.FindGameObjectsWithTag("House");
+
+            snowflakePrefab = ((GameObject)Resources.Load("Prefabs/Snowflake")).GetComponent<SnowFlake>();
+            snowflakePrefab.ReuseID = 3;
+
+            starPrefab = ((GameObject)Resources.Load("Prefabs/Star")).GetComponent<Star>();
+            starPrefab.ReuseID = 4;
+
+            wreethPrefab = ((GameObject)Resources.Load("Prefabs/Wreeth")).GetComponent<ChristmasWreath>();
+            wreethPrefab.ReuseID = 5;
+
+        }
 
         // Use this for initialization
         void Start()
         {
-         
-     
+
             SantaController santa = GameObject.Find("Santa").GetComponent<SantaController>();
 
-            housePrefab = ((GameObject)Resources.Load("Prefabs/House")).GetComponent<House>();
-            //May actually just change to static oncstants as will start to get More hectic as more pools added.
-            housePrefab.ReuseID = 2;
+          
             poolManager = GameObject.Find("PoolManager").GetComponent<PoolManager>();
-            //No more than 5 seeing at a time
-            poolManager.AddPool(housePrefab, 30);
+
+            foreach (GameObject house in houses)
+            {
+                house.GetComponent<House>().PassedHouse += () =>
+                {
+
+                    passedHouses += 1;
+
+
+                    //For GUI
+                    this.PassedHouse(passedHouses, numHouses);
+
+                };
+            }
             passedHouses = 0;
-            numHouses = 0;
-
-
-           
-            snowflakePrefab = ((GameObject)Resources.Load("Prefabs/Snowflake")).GetComponent<SnowFlake>();
-            snowflakePrefab.ReuseID = 3;
-            starPrefab = ((GameObject)Resources.Load("Prefabs/Star")).GetComponent<Star>();
-            starPrefab.ReuseID = 4;
-            wreethPrefab = ((GameObject)Resources.Load("Prefabs/Wreeth")).GetComponent<ChristmasWreath>();
-            wreethPrefab.ReuseID = 5;
-
-            
+            numHouses = 0;            
             
             poolManager.AddPool(snowflakePrefab, 5);
 
@@ -227,28 +240,38 @@ namespace SantaGame {
 
         private void spawnHouses()
         {
-          
+
+            int housesSpawned = 0;
+
+            LinkedList<GameObject> housesToSpawn;
+            //only adding up to num houses to spawn
+
+            //O(m) operation, where m is numHouses but removing will be constant time so it's fine.
             for (int i = 0; i < numHouses; ++i)
+                housesToSpawn.AddFirst(houses[i]);
+
+            //Okay, so if don't use linked list, and just randomize again
+            //until index that's not already chosen, then I still need a container to hold
+            //those used indices, AND potentially infinite, AND traversing same length container.
+            //But I decided to use Linked List to hold just up to houses used, and when spawn one
+            //remove it, which is O(n) * O(1) O(n) to get to index, and O(1) for removing it
+            //BUT traversing it decreases in size for every house spawned.
+
+            int i = 0;
+            while ( housesSpawned < numHouses)
             {
-                //In here will place position of house in array of positions
-                Reusable house = poolManager.Acquire(housePrefab.ReuseID);
-                
-                //Need to create the house spawn points first.
-               // house.gameObject.transform.position = houseSpawnPoints[i];
+                House house = housesToSpawn[i];
+                bool willSpawn = Random.Range(1, 101) >= 51;
 
-                //Randomly make nice or naughty, since won't depend on level anymore
+                if (willSpawn)
+                {
+                    housesToSpawn.Remove(house);
+                    house.gameObject.SetActive(true);
 
-                //so automatically incremented
-                house.GetComponent<House>().PassedHouse += () => {
+                }
 
-                    passedHouses += 1;
-
-
-                    //For GUI
-                    this.PassedHouse(passedHouses,numHouses);
-
-                };
-                house.gameObject.SetActive(true);
+                i += 1;
+                i %= numHouses;
             }
         }
 
