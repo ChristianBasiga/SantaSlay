@@ -13,8 +13,12 @@ namespace SantaGame {
 
 
         public Transform boundary;
-        private Transform background;
-        public GameObject[] houses;
+        public Transform background1;
+        public Transform background2;
+
+        delegate void HouseAction();
+        Dictionary<GameObject, Queue<HouseAction>> houses;
+        bool[] housesPassed;
         PoolManager poolManager;
 
         
@@ -42,7 +46,7 @@ namespace SantaGame {
         //For GUI and for snowflake spawning
         int passedHouses;
 
-        House housePrefab;
+      
 
         //All possible spawn points
         private List<Vector3> houseSpawnPoints;
@@ -75,7 +79,13 @@ namespace SantaGame {
 
         void Awake()
         {
-            houses = GameObjects.FindGameObjectsWithTag("House");
+            GameObject[] houses = GameObjects.FindGameObjectsWithTag("House");
+            housesPassed = new bool[houses.Length];
+
+            foreach(GameObject house in houses)
+            {
+                houses[house] = new Queue<HouseAction>();
+            }
 
             snowflakePrefab = ((GameObject)Resources.Load("Prefabs/Snowflake")).GetComponent<SnowFlake>();
             snowflakePrefab.ReuseID = 3;
@@ -101,9 +111,9 @@ namespace SantaGame {
             {
                 house.GetComponent<House>().PassedHouse += () =>
                 {
+                    housesPassed[passedHouses] = true;
 
                     passedHouses += 1;
-
 
                     //For GUI
                     this.PassedHouse(passedHouses, numHouses);
@@ -231,6 +241,7 @@ namespace SantaGame {
                 PassedHouse(passedHouses,numHouses);
                 
                 spawnHouses();
+                SetUpNextRow();
                 SpawnWreeths(1);
 
                 LoadedLevel();
@@ -238,6 +249,7 @@ namespace SantaGame {
 
         }
 
+        //Only called at end of level
         private void spawnHouses()
         {
 
@@ -247,9 +259,10 @@ namespace SantaGame {
             //only adding up to num houses to spawn
 
             //O(m) operation, where m is numHouses but removing will be constant time so it's fine.
-            for (int i = 0; i < numHouses; ++i)
-                housesToSpawn.AddFirst(houses[i]);
-
+            foreach (Gameobject house in houses.Keys)
+            {
+                housesToSpawn.AddFirst(house);
+            }
             //Okay, so if don't use linked list, and just randomize again
             //until index that's not already chosen, then I still need a container to hold
             //those used indices, AND potentially infinite, AND traversing same length container.
@@ -257,21 +270,33 @@ namespace SantaGame {
             //remove it, which is O(n) * O(1) O(n) to get to index, and O(1) for removing it
             //BUT traversing it decreases in size for every house spawned.
 
-            int i = 0;
+            int houseIndex = 0;
             while ( housesSpawned < numHouses)
             {
-                House house = housesToSpawn[i];
+                LinkedListNode<GameObject> house = housesToSpawn.First;
+
+                for (int j = 0; j < houseIndex; ++j)
+                {
+                    house = house.Next;
+                }
+
                 bool willSpawn = Random.Range(1, 101) >= 51;
 
                 if (willSpawn)
                 {
                     housesToSpawn.Remove(house);
-                    house.gameObject.SetActive(true);
+                    houses[house.Value].Enqueue(() => { house.Value.SetActive(true); });
+                }
+                else
+                {
+                    //This is to avoid resetting all to false
+                    //while loading next row of houses.
+                    houses[house.Value].Enqueue(() => { house.Value.SetActive(false); });
 
                 }
 
-                i += 1;
-                i %= numHouses;
+                houseIndex += 1;
+                houseIndex %= numHouses;
             }
         }
 
@@ -285,11 +310,65 @@ namespace SantaGame {
             }
         }
 
+        void SetUpNextRow()
+        {
+            int houseIndicies = 0;
+
+            //Need to really test this
+            //But should work, tested on paper.
+            //There has to be way to shorten this.
+            foreach (KeyValuePair<GameObject, Queue<HouseAction>> pair in houses)
+            {
+
+                //Only if actually passed this house
+                if (housesPassed[houseIndicies])
+                {
+                    HouseAction action = pair.Value.Dequeue();
+                    action();
+                    housesPassed[houseIndicies] = false;
+                }
+                houseIndicies += 1;
+             
+                if (houseIndicies == passedHouses) break;
+            }
+        }
+
         void Update()
         {
            
+
+            if (background1.position.x + background1.localScale.x / 2 <= boundary.position.x - boundary.localScale.x / 2)
+            {
+                if (passedHouses == numHouses)
+                {
+                    ReachedEndOfLevel();
+                }
+                else
+                {
+                    SetUpNextRow();
+                    Vector3 newPos = new Vector3(background2.position.x + background2.localScale.x / 2, background1.position.y, 0);
+                    background1.position = newPos;
+                    //Then move background1 to end of background 2
+                }
+            }
+
+            if (background2.position.x + background2.localScale.x / 2 <= boundary.position.x - boundary.localScale.x / 2)
+            {
+                if (passedHouses == numHouses)
+                {
+                    ReachedEndOfLevel();
+                }
+                else
+                {
+                    SetUpNextRow();
+                    Vector3 newPos = new Vector3(background1.position.x + background1.localScale.x / 2, background1.position.y, 0);
+                    background2.position = newPos;
+                }
+            }
+
+
             //Tbh, could just reach end of level when do this, but didn't want to remove it otherwise passedHoues only for GUI
-            if (background != null && boundary.position.x - boundary.localScale.x / 2 >= background.position.x + boundary.localScale.x / 2)
+            /*if (background != null && boundary.position.x - boundary.localScale.x / 2 >= background.position.x + boundary.localScale.x / 2)
             {
                 if (ReachedEndOfLevel != null)
                 {
@@ -298,7 +377,7 @@ namespace SantaGame {
                     //GameManager will set the background in a callback attached to ReachedEndOfLevel event
                     background = null;
                 }
-            }
+            }*/
 
         }
 
